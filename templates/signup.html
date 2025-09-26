@@ -79,6 +79,13 @@
       color: #b3b3b3 !important;
       /* light grey for forgot password */
     }
+
+    .alert {
+      color: #fff;
+      background-color: #dc3545;
+      /* danger red */
+      border: none;
+    }
   </style>
 </head>
 
@@ -88,22 +95,43 @@
     <div class="col-md-6 login-left d-flex flex-column justify-content-center">
       <h2>Create An Account</h2>
       <p>Enter your account details</p>
+      <!-- Flash messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      {% for category, message in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+
+      {% if redirect_to_login %}
+      <script>
+        // 3 second baad redirect
+        setTimeout(function () {
+          window.location.href = "/login";
+        }, 3000);
+      </script>
+      {% endif %}
+
       <form action='/' method="POST">
         <div class="mb-3">
-          <input type="text" class="form-control" placeholder="Name" name = 'name' required>
+          <input type="text" class="form-control" placeholder="Name" name='name' required>
         </div>
         <div class="mb-3">
-          <input type="text" class="form-control" placeholder="Email" name = 'email' required>
+          <input type="email" class="form-control" placeholder="Email" name='email' required>
         </div>
         <div class="mb-3">
-          <input type="password" class="form-control" placeholder="Password" name = 'password' required>
+          <input type="password" class="form-control" placeholder="Password" name='password' required>
         </div>
         <div class="d-flex justify-content-between align-items-center mb-3">
           <a href="#" class="text-decoration-none text-muted">Forgot Password?</a>
         </div>
         <button type="submit" class="btn btn-login w-100 text-white">Sign Up</button>
       </form>
-      <p class="mt-4"> Already have an account?  
+      <p class="mt-4"> Already have an account?
         <a href="/login" class="btn btn-outline-light btn-sm mx-3">Login Now</a>
       </p>
     </div>
@@ -112,7 +140,8 @@
     <div class="col-md-6 login-right d-flex flex-column justify-content-center">
       <h2>Welcome To</h2>
       <h4>Meeting Management System</h4>
-      <img src="{{ url_for('static', filename='images/signup.png') }}" alt="Illustration" width="300" class="d-block mx-auto">
+      <img src="{{ url_for('static', filename='images/signup.png') }}" alt="Illustration" width="300"
+        class="d-block mx-auto">
 
     </div>
   </div>
