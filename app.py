@@ -70,8 +70,19 @@ def loginPage():
 @app.route('/home',methods=['GET', 'POST'] )
 @login_required
 def homePage():
-    return render_template('MeetingDashboard.html')
+    return render_template('menu.html')
 
+@app.route('/meeting', methods = ['GET', 'POST'])
+def meeting():
+    return render_template('meeting.html')
+
+@app.route('/calendar', methods = ['GET', 'POST'])
+def calendar():
+    return render_template('calender.html')
+
+@app.route('/logout', methods = ['GET', 'POST'])
+def logout():
+    return render_template('login.html')
 
 if __name__ == "__main__":
     app.run(debug = True, port = 8000)

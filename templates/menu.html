@@ -1,0 +1,71 @@
+{% extends "MeetingDashboard.html" %}
+{% block title %}Dashboard - Meeting Management{% endblock %}
+
+{% block content %}
+<h2 class="dashboard-title">Welcome to Meeting Management Dashboard</h2>
+<hr>
+
+<div class="cards-grid">
+    <!-- Example Card -->
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title"><i class="bi bi-calendar-check me-2"></i>Meetings</h5>
+            <ul class="stats-list">
+                <li>Scheduled Meetings: <span>20</span></li>
+                <li>Last Month Meetings: <span>16</span></li>
+                <li>Cancelled Meetings: <span>16</span></li>
+                <li>Most Attended Meetings: <span>7</span></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title"><i class="bi bi-door-open me-2"></i>Room Availability</h5>
+            <ul class="stats-list">
+                <li>Available Rooms: <span>8</span></li>
+                <li>Booked Rooms: <span>12</span></li>
+                <li>Pending Requests: <span>3</span></li>
+                <li>Utilization: <span>75%</span></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title"><i class="bi bi-journal-text me-2"></i>Reports</h5>
+            <ul class="stats-list">
+                <li>Generated Reports: <span>10</span></li>
+                <li>Monthly Reports: <span>4</span></li>
+                <li>Shared Reports: <span>6</span></li>
+                <li>Pending: <span>2</span></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title"><i class="bi bi-calendar-day me-2"></i>Calendar</h5>
+            <ul class="stats-list">
+                <li>Upcoming Events: <span>14</span></li>
+                <li>Holidays: <span>5</span></li>
+                <li>Team Schedules: <span>8</span></li>
+                <li>Reminders Set: <span>11</span></li>
+            </ul>
+        </div>
+    </div>
+    <!-- Add other cards here -->
+</div>
+
+<hr>
+
+<div class="todo-section">
+    <h3 class="section-title"><i class="bi bi-list-task me-2"></i>To-Do</h3>
+    <div class="todo-form mb-3">
+        <input type="text" id="todoInput" placeholder="Add a new task (e.g., 'Draft meeting agenda, high')" />
+        <button id="addTodoBtn" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Add</button>
+        <button id="clearTodosBtn" class="btn btn-danger"><i class="bi bi-x-circle"></i> Clear All</button>
+    </div>
+    <div class="todo-cards" id="todoCards"></div>
+</div>
+{% endblock %}
