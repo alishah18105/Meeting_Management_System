@@ -70,7 +70,7 @@ def loginPage():
 @app.route('/home',methods=['GET', 'POST'] )
 @login_required
 def homePage():
-    return "<p>Home Page</p>"
+    return render_template('MeetingDashboard.html')
 
 
 if __name__ == "__main__":
