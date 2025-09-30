@@ -152,16 +152,18 @@
     padding-bottom: 10px;
     scroll-behavior: smooth;
     white-space: nowrap;
-    
-  }
-  .meeting-cards-grid::-webkit-scrollbar {
-    height: 8px;              /* Scrollbar height */
-}
 
-.meeting-cards-grid::-webkit-scrollbar-thumb {
-    background-color: rgba(0,0,0,0.3);
+  }
+
+  .meeting-cards-grid::-webkit-scrollbar {
+    height: 8px;
+    /* Scrollbar height */
+  }
+
+  .meeting-cards-grid::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.3);
     border-radius: 4px;
-}
+  }
 
   .meeting-body {
     background: #6d4ff5;
@@ -257,7 +259,7 @@
 <div class="modal fade" id="addMeetingModal" tabindex="-1" aria-labelledby="addMeetingLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content modal-card">
-      <form id="addMeetingForm">
+      <form id="addMeetingForm" action="/meeting" method="POST">
         <div class="modal-header">
           <h5 class="modal-title" id="addMeetingLabel">Add New Meeting</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -291,7 +293,7 @@
               <select class="form-select" name="status">
                 <option value="Scheduled">Scheduled</option>
                 <option value="Completed">Completed</option>
-                <option value="Cancelled">Cancelled</option>
+                <option value="Canceled">Cancelled</option>
               </select>
             </div>
           </div>
@@ -325,86 +327,45 @@
 </div>
 <!-- Meetings Table -->
 <div class="meeting-cards-grid">
+  {% for meeting in meetings %}
   <div class="meeting-card">
+    <!-- Top Section -->
     <div class="meeting-header">
-      <h5 class="meeting-title">Design Sprint</h5>
-      <p class="meeting-time">Nov 10, 11:30am - 01:20pm</p>
+      <h5 class="meeting-title">{{ meeting.title }}</h5>
+      <p class="meeting-time">
+        {{ meeting.start_time.strftime("%b %d, %I:%M %p") }} -
+        {{ meeting.end_time.strftime("%I:%M %p") }}
+      </p>
     </div>
+
+    <!-- Tags Section -->
     <div class="meeting-body">
       <div class="meeting-tags">
-        <span class="badge bg-light text-dark">Scheduled</span>
+        <span class="badge bg-light text-dark">{{ meeting.status }}</span>
+        <span class="badge bg-light text-dark">
+          {{ ((meeting.end_time - meeting.start_time).seconds // 3600) }} hrs
+        </span>
+        <span class="badge bg-light text-dark">Organizer</span>
       </div>
     </div>
+
+    <!-- Footer Section -->
     <div class="meeting-footer d-flex justify-content-between align-items-center">
       <div class="participants">
         <img src="https://i.pravatar.cc/32?img=1" class="rounded-circle" width="32" height="32">
-        <img src="https://i.pravatar.cc/32?img=2" class="rounded-circle" width="32" height="32">
-        <span class="text-white">+5</span>
+        <img src="https://i.pravatar.cc/32?img=2" class="rounded-circle" width="32" height="32"> <span
+          class="text-white">+5</span>
       </div>
-      <button class="btn join-btn">Join Meeting</button>
+      <a href="#" class="btn join-btn">
+        Join Meeting
+      </a>
     </div>
   </div>
-
-  <div class="meeting-card">
-    <div class="meeting-header">
-      <h5 class="meeting-title">Design Sprint</h5>
-      <p class="meeting-time">Nov 10, 11:30am - 01:20pm</p>
-    </div>
-    <div class="meeting-body">
-      <div class="meeting-tags">
-        <span class="badge bg-light text-dark">Scheduled</span>
-      </div>
-    </div>
-    <div class="meeting-footer d-flex justify-content-between align-items-center">
-      <div class="participants">
-        <img src="https://i.pravatar.cc/32?img=1" class="rounded-circle" width="32" height="32">
-        <img src="https://i.pravatar.cc/32?img=2" class="rounded-circle" width="32" height="32">
-        <span class="text-white">+5</span>
-      </div>
-      <button class="btn join-btn">Join Meeting</button>
-    </div>
-  </div>
-
-  <div class="meeting-card">
-    <div class="meeting-header">
-      <h5 class="meeting-title">Design Sprint</h5>
-      <p class="meeting-time">Nov 10, 11:30am - 01:20pm</p>
-    </div>
-    <div class="meeting-body">
-      <div class="meeting-tags">
-        <span class="badge bg-light text-dark">Scheduled</span>
-      </div>
-    </div>
-    <div class="meeting-footer d-flex justify-content-between align-items-center">
-      <div class="participants">
-        <img src="https://i.pravatar.cc/32?img=1" class="rounded-circle" width="32" height="32">
-        <img src="https://i.pravatar.cc/32?img=2" class="rounded-circle" width="32" height="32">
-        <span class="text-white">+5</span>
-      </div>
-      <button class="btn join-btn">Join Meeting</button>
-    </div>
-  </div>
-
-  <div class="meeting-card">
-    <div class="meeting-header">
-      <h5 class="meeting-title">Design Sprint</h5>
-      <p class="meeting-time">Nov 10, 11:30am - 01:20pm</p>
-    </div>
-    <div class="meeting-body">
-      <div class="meeting-tags">
-        <span class="badge bg-light text-dark">Scheduled</span>
-      </div>
-    </div>
-    <div class="meeting-footer d-flex justify-content-between align-items-center">
-      <div class="participants">
-        <img src="https://i.pravatar.cc/32?img=1" class="rounded-circle" width="32" height="32">
-        <img src="https://i.pravatar.cc/32?img=2" class="rounded-circle" width="32" height="32">
-        <span class="text-white">+5</span>
-      </div>
-      <button class="btn join-btn">Join Meeting</button>
-    </div>
-  </div>
+  {% endfor %}
+</div>
 
 
 
-  {% endblock %}
+
+
+{% endblock %}

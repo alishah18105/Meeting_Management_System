@@ -1,7 +1,8 @@
+from datetime import datetime
 import os
 from flask import Flask, flash, request, render_template, redirect, session
 from flask_sqlalchemy import SQLAlchemy
-from models import db, User
+from models import Meeting, Organizer, db, User
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 from flask import redirect, session, url_for, flash
@@ -74,7 +75,54 @@ def homePage():
 
 @app.route('/meeting', methods = ['GET', 'POST'])
 def meeting():
-    return render_template('meeting.html')
+    if request.method == 'POST':
+        title = request.form['title']
+        room_id = request.form['room_id']
+        description = request.form['description']
+        status = request.form['status']
+        start_time = datetime.fromisoformat(request.form['start_time'])
+        end_time = datetime.fromisoformat(request.form['end_time'])
+
+
+        # 1. Get logged-in user_id
+        user_id = session['user_id']
+
+        # 2. Check if user is already an organizer
+        organizer = Organizer.query.filter_by(user_id=user_id).first()
+
+        # 3. If not organizer yet → add them
+        if not organizer:
+            organizer = Organizer(user_id=user_id)
+            db.session.add(organizer)
+            db.session.commit() 
+
+        # 4. Create meeting linked to this organizer
+        meeting = Meeting(
+            title=title,
+            room_id=room_id,
+            description=description,
+            status=status,
+            start_time=start_time,
+            end_time=end_time,
+            organizer_id=organizer.organizer_id   
+        )
+        db.session.add(meeting)
+        db.session.commit()
+        return redirect('/meeting')
+    
+    #To Fetch Meeting Record Of Current User
+    user_id = session['user_id']
+    organizer = Organizer.query.filter_by(user_id=user_id).first()
+
+    if not organizer:
+        flash("You haven’t created any meetings yet.", "info")
+        return render_template('meeting.html', meetings=[])
+
+    # 2. Fetch all meetings for this organizer
+    meetings = Meeting.query.filter_by(organizer_id=organizer.organizer_id).all()
+
+    return render_template('meeting.html', meetings=meetings)
+    
 
 @app.route('/calendar', methods = ['GET', 'POST'])
 def calendar():
