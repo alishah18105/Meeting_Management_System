@@ -2,7 +2,7 @@ from datetime import datetime
 import os
 from flask import Flask, flash, request, render_template, redirect, session
 from flask_sqlalchemy import SQLAlchemy
-from models import Meeting, Organizer, db, User
+from models import Meeting, Organizer, Participant, db, User
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 from flask import redirect, session, url_for, flash
@@ -73,7 +73,8 @@ def loginPage():
 def homePage():
     return render_template('menu.html')
 
-@app.route('/meeting', methods = ['GET', 'POST'])
+@app.route('/meeting', methods=['GET', 'POST'])
+@login_required
 def meeting():
     if request.method == 'POST':
         title = request.form['title']
@@ -83,20 +84,16 @@ def meeting():
         start_time = datetime.fromisoformat(request.form['start_time'])
         end_time = datetime.fromisoformat(request.form['end_time'])
 
-
-        # 1. Get logged-in user_id
         user_id = session['user_id']
 
-        # 2. Check if user is already an organizer
+        # Check if user is organizer
         organizer = Organizer.query.filter_by(user_id=user_id).first()
-
-        # 3. If not organizer yet → add them
         if not organizer:
             organizer = Organizer(user_id=user_id)
             db.session.add(organizer)
-            db.session.commit() 
+            db.session.commit()
 
-        # 4. Create meeting linked to this organizer
+        # Create meeting
         meeting = Meeting(
             title=title,
             room_id=room_id,
@@ -104,25 +101,61 @@ def meeting():
             status=status,
             start_time=start_time,
             end_time=end_time,
-            organizer_id=organizer.organizer_id   
+            organizer_id=organizer.organizer_id
         )
         db.session.add(meeting)
         db.session.commit()
         return redirect('/meeting')
-    
-    #To Fetch Meeting Record Of Current User
+
+    # Fetch meetings hosted by current user
     user_id = session['user_id']
     organizer = Organizer.query.filter_by(user_id=user_id).first()
 
-    if not organizer:
-        flash("You haven’t created any meetings yet.", "info")
-        return render_template('meeting.html', meetings=[])
+    hosted_meetings = []
+    if organizer:
+        hosted_meetings = Meeting.query.filter_by(
+            organizer_id=organizer.organizer_id
+        ).all()
 
-    # 2. Fetch all meetings for this organizer
-    meetings = Meeting.query.filter_by(organizer_id=organizer.organizer_id).all()
+    # Fetch meetings user has joined as participant
+    joined_meetings = (
+        db.session.query(Meeting)
+        .join(Participant, Participant.meeting_id == Meeting.meeting_id)
+        .filter(Participant.user_id == user_id)
+        .all()
+    )
 
-    return render_template('meeting.html', meetings=meetings)
-    
+    return render_template(
+        'meeting.html',
+        hosted_meetings=hosted_meetings,
+        joined_meetings=joined_meetings
+    )
+
+@app.route('/join_meeting', methods=['POST'])
+@login_required
+def join_meeting():
+    meeting_id_str = request.form['meeting_id']   # e.g. "00001"
+    meeting_id = int(meeting_id_str) 
+    user_id = session['user_id']
+
+    meeting = Meeting.query.filter_by(meeting_id=meeting_id).first()
+    if not meeting:
+        flash("Meeting not found!", "danger")
+        return redirect('/meeting')
+
+    # check if already joined
+    existing = Participant.query.filter_by(meeting_id=meeting_id, user_id=user_id).first()
+    if existing:
+        flash("You have already joined this meeting.", "info")
+        return redirect('/meeting')
+
+    participant = Participant(meeting_id=meeting_id, user_id=user_id, attendance_status="accepted")
+    db.session.add(participant)
+    db.session.commit()
+
+    flash("Successfully joined the meeting!", "success")
+    return redirect('/meeting')
+
 
 @app.route('/calendar', methods = ['GET', 'POST'])
 def calendar():

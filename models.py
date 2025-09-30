@@ -79,6 +79,7 @@ class Meeting(db.Model):
     participants = db.relationship("Participant", back_populates="meeting", cascade="all, delete")
     notifications = db.relationship("Notification", back_populates="meeting", cascade="all, delete")
 
+
     def __repr__(self):
         return f"<Meeting {self.title}>"
 
