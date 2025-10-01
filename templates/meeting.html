@@ -323,7 +323,7 @@
 
 </div>
 <!----------------------------------------------------------------------------------------------------->
-<!-- Join Meeting Modal -->
+
 <!-- Join Meeting Modal ------------------------------------------------------------------------------->
 <div class="modal fade" id="joinMeetingModal" tabindex="-1" aria-labelledby="joinMeetingLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
@@ -361,7 +361,11 @@
 </div>
 <div class="meeting-cards-grid">
   {% for meeting in hosted_meetings %}
-  <div class="meeting-card">
+  <div class="meeting-card position-relative"">
+    <button class="icon-btn border-0 bg-transparent position-absolute top-0 end-0 m-2">
+      <i class="bi bi-share-fill text-white" style="font-size: 1.2rem;"></i>
+    </button>
+    
     <div class="meeting-header">
       <h5 class="meeting-title">{{ meeting.title }}</h5>
       <p class="meeting-time">
@@ -385,6 +389,77 @@
         <span class="text-white">+5</span>
       </div>
       <a href="#" class="btn join-btn">Join Meeting</a>
+      <button class="btn join-btn" data-bs-toggle="modal" data-bs-target="#editMeetingModal{{meeting.meeting_id}}">
+        Edit
+      </button>
+    </div>
+  </div>
+
+  <div class="modal fade" id="editMeetingModal{{meeting.meeting_id}}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content modal-card">
+        <form action="/update_meeting/{{meeting.meeting_id}}" method="POST">
+          <div class="modal-header">
+            <h5 class="modal-title">Edit Meeting</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+
+          <div class="modal-body p-3">
+            <!-- Title + Room ID -->
+            <div class="row g-3">
+              <div class="col-md-6 d-flex flex-column">
+                <label class="form-label">Meeting Title</label>
+                <input type="text" class="form-control" name="title" value="{{meeting.title}}" required>
+              </div>
+              <div class="col-md-6 d-flex flex-column">
+                <label class="form-label">Room ID</label>
+                <input type="text" class="form-control" name="room_id" value="{{meeting.room_id}}" required>
+              </div>
+            </div>
+
+            <!-- Description -->
+            <div class="row g-3 mt-2">
+              <div class="col-12">
+                <label class="form-label">Description</label>
+                <textarea class="form-control" name="description" rows="3">{{ meeting.description }}</textarea>
+              </div>
+            </div>
+
+            <!-- Status -->
+            <div class="row g-3 mt-2">
+              <div class="col-12">
+                <label class="form-label">Status</label>
+                <select class="form-select" name="status">
+                  <option value="Scheduled" {% if meeting.status=="Scheduled" %}selected{% endif %}>Scheduled</option>
+                  <option value="Completed" {% if meeting.status=="Completed" %}selected{% endif %}>Completed</option>
+                  <option value="Canceled" {% if meeting.status=="Canceled" %}selected{% endif %}>Canceled</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Start + End Date -->
+            <div class="row g-3 mt-2">
+              <div class="col-md-6 d-flex flex-column">
+                <label class="form-label">Start Date & Time</label>
+                <input type="datetime-local" class="form-control"
+                  name="start_time"
+                  value="{{ meeting.start_time.strftime('%Y-%m-%dT%H:%M') }}" required>
+              </div>
+              <div class="col-md-6 d-flex flex-column">
+                <label class="form-label">End Date & Time</label>
+                <input type="datetime-local" class="form-control"
+                  name="end_time"
+                  value="{{ meeting.end_time.strftime('%Y-%m-%dT%H:%M') }}" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary">Update Meeting</button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
   {% else %}

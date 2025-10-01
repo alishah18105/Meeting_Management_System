@@ -157,6 +157,31 @@ def join_meeting():
     return redirect('/meeting')
 
 
+@app.route('/update_meeting/<int:meeting_id>', methods=["POST"])
+def update_meeting(meeting_id):
+    meeting = Meeting.query.filter_by(meeting_id=meeting_id).first()
+
+    if request.method == "POST":
+        title = request.form.get("title")
+        room_id = request.form.get("room_id")
+        description = request.form.get("description")
+        status = request.form.get("status")
+        start_time = datetime.fromisoformat(request.form['start_time'])
+        end_time = datetime.fromisoformat(request.form['end_time'])
+
+        meeting.title = title
+        meeting.room_id = room_id
+        meeting.description = description
+        meeting.status = status
+        meeting.start_time = start_time
+        meeting.end_time = end_time
+        db.session.add(meeting)       
+        db.session.commit()
+        flash("Meeting updated successfully!", "success")
+        return redirect('/meeting') 
+    return redirect('/meeting')
+
+
 @app.route('/calendar', methods = ['GET', 'POST'])
 def calendar():
     return render_template('calender.html')
