@@ -68,7 +68,7 @@ meeting-management-system/
 │   ├── login.html  
 │   ├── meeting.html  
 │   ├── MeetingDashboard.html  
-│   ├── menu.html
+│   ├── menu.html. 
 │   └── signup.html  
 
 ├── static/               # Static assets  
