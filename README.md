@@ -57,9 +57,9 @@ A full-stack Flask + PostgreSQL web app that helps users **schedule, join, and m
 
 ---
 ## 📂 Project Structure
-
-meeting-management-system/  
-│── app.py                # Main Flask application entry point  
+  
+meeting-management-system/      
+│── app.py                # Main Flask application entry point    
 │── models.py             # Database models (SQLAlchemy ORM)  
 │── requirements.txt      # Project dependencies  
 
