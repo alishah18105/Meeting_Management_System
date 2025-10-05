@@ -1,218 +1,7 @@
 {% extends "MeetingDashboard.html" %}
 {% block content %}
 
-<style>
-  .zoom-btn {
-    width: 90px;
-    height: 90px;
-    border: none;
-    border-radius: 20px;
-    /* makes rounded square */
-    font-size: 28px;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-    cursor: pointer;
-  }
-
-  .zoom-btn i {
-    font-size: 42px;
-  }
-
-  .zoom-orange {
-    background-color: #f57c00;
-  }
-
-  /* Zoom orange */
-  .zoom-blue {
-    background-color: #1976d2;
-  }
-
-  /* Blue */
-  .zoom-red {
-    background-color: #d32f2f;
-  }
-
-  /* Red */
-  .zoom-green {
-    background-color: #388e3c;
-  }
-
-  /* Green */
-
-  .zoom-btn:hover {
-    opacity: 0.9;
-  }
-
-  /* Gradient Card Style for Modal */
-  .modal-card {
-    background: linear-gradient(135deg, #6d4ff5, #a569ff);
-    border-radius: 16px;
-    color: white;
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
-    border: none;
-    padding: 1.2rem;
-  }
-
-  /* White close button */
-  .modal-card .btn-close {
-    filter: invert(1);
-  }
-
-  /* Labels */
-  .modal-card .form-label {
-    font-weight: 600;
-    color: #fff;
-  }
-
-  .modal-card .form-control,
-  .modal-card .form-select,
-  .modal-card textarea {
-    background: white !important;
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    color: black !important;
-    /* Input aur select ke andar ka text black */
-    border-radius: 8px;
-  }
-
-  /* Placeholder text ko halka gray karo */
-  .modal-card .form-control::placeholder {
-    color: #6c757d !important;
-    /* Bootstrap ka default gray */
-    opacity: 1;
-  }
-
-  /* Dropdown options bhi black */
-  .modal-card .form-select option {
-    color: black !important;
-  }
-
-  /* Footer buttons */
-  .modal-card .btn-primary {
-    background-color: #4cafef;
-    border: none;
-  }
-
-  .modal-card .btn-secondary {
-    background-color: rgba(255, 255, 255, 0.25);
-    border: none;
-    color: white;
-  }
-
-  /* Keep inputs neat inside modal */
-  .modal-card .form-control {
-    width: 100%;
-    max-width: 100%;
-  }
-
-  /* Special adjustment for Room ID and DateTime fields */
-  .modal-card input[name="room_id"],
-  .modal-card input[name="start_time"],
-  .modal-card input[name="end_time"] {
-    max-width: 85%;
-    /* adjust as needed */
-  }
-
-  .meeting-subtitle {
-    font-size: 1.4rem;
-    font-weight: 500;
-    margin-bottom: 2rem;
-    color: #333;
-  }
-
-  .meeting-card {
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-    margin-bottom: 20px;
-    width: 320px;
-    /* Fixed width */
-    height: 200px;
-    /* Fixed height */
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-
-  /* Make sure the header and footer adjust nicely */
-  .meeting-header {
-    background: #6d4ff5;
-    color: white;
-    padding: 1rem;
-    flex-shrink: 0;
-  }
-
-  .meeting-cards-grid {
-    display: flex;
-    flex-wrap: nowrap;
-    gap: 20px;
-    overflow-x: auto;
-    padding-bottom: 10px;
-    scroll-behavior: smooth;
-    white-space: nowrap;
-
-  }
-
-  .meeting-cards-grid::-webkit-scrollbar {
-    height: 8px;
-    /* Scrollbar height */
-  }
-
-  .meeting-cards-grid::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.3);
-    border-radius: 4px;
-  }
-
-  .meeting-body {
-    background: #6d4ff5;
-    padding: 1rem;
-    flex-shrink: 0;
-    /* fill available space */
-  }
-
-  .meeting-footer {
-    background: #1c1c1c;
-    padding: 0.8rem 1rem;
-    flex-shrink: 0;
-  }
-
-
-  .meeting-title {
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin: 0;
-  }
-
-  .meeting-time {
-    font-size: 0.9rem;
-    margin: 4px 0;
-  }
-
-  .meeting-tags .badge {
-    margin-right: 6px;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.8);
-  }
-
-  /* Bottom Section */
-
-  .participants img {
-    margin-right: -8px;
-    border: 2px solid #1c1c1c;
-  }
-
-  /* Join Button */
-  .join-btn {
-    background: linear-gradient(135deg, #6d4ff5, #a569ff);
-    color: white;
-    border: none;
-    border-radius: 12px;
-    padding: 6px 16px;
-    font-weight: 600;
-  }
-</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/meeting.css') }}">
 
 <h2 class="dashboard-title">Meetings</h2>
 <hr>
@@ -224,7 +13,7 @@
 
   <!-- New Meeting -->
   <div class="d-flex flex-column align-items-center mx-3">
-    <button class="zoom-btn zoom-orange" data-bs-toggle="modal" data-bs-target="#addMeetingModal">
+    <button class="zoom-btn zoom-orange" data-bs-toggle="modal" data-bs-target="#instantMeetingModal">
       <i class="bi bi-camera-video-fill"></i>
     </button>
     <span class="mt-2">New Meeting</span>
@@ -242,7 +31,7 @@
 
   <!-- Schedule -->
   <div class="d-flex flex-column align-items-center mx-3">
-    <button class="zoom-btn zoom-red">
+    <button class="zoom-btn zoom-red" data-bs-toggle="modal" data-bs-target="#addMeetingModal">
       <i class="bi bi-calendar-plus"></i>
     </button>
     <span class="mt-2">Schedule</span>
@@ -257,11 +46,11 @@
   </div>
 </div>
 
-<!-- Add Meeting Modal ------------------------------------------------------------------------------->
+<!-- Add New Meeting Modal (Schedule) ------------------------------------------------------------------------------->
 <div class="modal fade" id="addMeetingModal" tabindex="-1" aria-labelledby="addMeetingLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content modal-card">
-      <form id="addMeetingForm" action="/meeting" method="POST">
+      <form id="newMeetingForm" action="/meeting" method="POST">
         <div class="modal-header">
           <h5 class="modal-title" id="addMeetingLabel">Add New Meeting</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -294,6 +83,7 @@
               <label class="form-label">Status</label>
               <select class="form-select" name="status">
                 <option value="Scheduled">Scheduled</option>
+                <option value="Ongoing">Ongoing</option>
                 <option value="Completed">Completed</option>
                 <option value="Canceled">Cancelled</option>
               </select>
@@ -322,7 +112,53 @@
   </div>
 
 </div>
-<!----------------------------------------------------------------------------------------------------->
+
+<!----Add Instant Meeting Modal (New Meeting)--------------------------------------------------------------------------------->
+
+<div class="modal fade" id="instantMeetingModal" tabindex="-1" aria-labelledby="instantMeetingModal" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content modal-card">
+      <form id="instantMeetingForm" action="/instant_meeting" method="POST">
+        <div class="modal-header">
+          <h5 class="modal-title" id="instantMeetingModal">Create Instant  Meeting</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body p-3">
+          <!-- Title + Room ID -->
+          <div class="row g-3">
+            <div class="col-md-6 d-flex flex-column">
+              <label class="form-label">Meeting Title</label>
+              <input type="text" class="form-control" name="title" required>
+            </div>
+            <div class="col-md-6 d-flex flex-column">
+              <label class="form-label">Room ID</label>
+              <input type="text" class="form-control" style="max-width: 80%;" name="room_id" required>
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div class="row g-3 mt-2">
+            <div class="col-12">
+              <label class="form-label">Description</label>
+              <textarea class="form-control" name="description" rows="3"></textarea>
+            </div>
+          </div>
+
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Start Meeting</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>
+<!---------------------------------------------------------------------------------------------->
+
 
 <!-- Join Meeting Modal ------------------------------------------------------------------------------->
 <div class="modal fade" id="joinMeetingModal" tabindex="-1" aria-labelledby="joinMeetingLabel" aria-hidden="true">
@@ -361,10 +197,16 @@
 </div>
 <div class="meeting-cards-grid">
   {% for meeting in hosted_meetings %}
+  {% if meeting.status != 'Completed' %}
   <div class="meeting-card position-relative"">
-    <button class="icon-btn border-0 bg-transparent position-absolute top-0 end-0 m-2">
-      <i class="bi bi-share-fill text-white" style="font-size: 1.2rem;"></i>
-    </button>
+    <button 
+  class="icon-btn border-0 bg-transparent position-absolute top-0 end-0 m-2 share-btn"
+  data-meeting-id="{{ meeting.meeting_id }}"
+  data-title="{{ meeting.title }}"
+  data-start="{{ meeting.start_time.strftime('%b %d, %I:%M %p') }}"
+  data-end="{{ meeting.end_time.strftime('%b %d, %I:%M %p') }}">
+  <i class="bi bi-share-fill text-white" style="font-size: 1.2rem;"></i>
+</button>
     
     <div class="meeting-header">
       <h5 class="meeting-title">{{ meeting.title }}</h5>
@@ -462,9 +304,30 @@
       </div>
     </div>
   </div>
+  {% endif %}
   {% else %}
   <p class="text-muted">You haven’t hosted any meetings yet.</p>
   {% endfor %}
+
+  <!-- Share Meeting Modal -->
+<div class="modal fade" id="shareMeetingModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content modal-card">
+      <div class="modal-header">
+        <h5 class="modal-title">Share Meeting Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <textarea id="shareText" class="form-control" rows="5" readonly></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button class="btn btn-primary" id="copyShareText">Copy</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 </div>
 
 
@@ -508,6 +371,40 @@
 
 
 
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const shareButtons = document.querySelectorAll(".share-btn");
+  const shareModal = new bootstrap.Modal(document.getElementById("shareMeetingModal"));
+  const shareTextArea = document.getElementById("shareText");
+  const copyBtn = document.getElementById("copyShareText");
+
+  shareButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = btn.dataset.meetingId;
+      const title = btn.dataset.title;
+      const start = btn.dataset.start;
+      const end = btn.dataset.end;
+
+      // Calculate duration (simple way)
+      const startTime = new Date(start);
+      const endTime = new Date(end);
+      const duration = ((endTime - startTime) / (1000 * 60 * 60)).toFixed(1) + " hrs";
+
+      const text = `Meeting ID: ${id}\nTitle: ${title}\nStart Time: ${start}\nDuration: ${duration}`;
+      shareTextArea.value = text;
+
+      shareModal.show();
+    });
+  });
+
+  copyBtn.addEventListener("click", () => {
+    shareTextArea.select();
+    document.execCommand("copy");
+    copyBtn.textContent = "Copied!";
+    setTimeout(() => (copyBtn.textContent = "Copy"), 1500);
+  });
+});
+</script>
 
 
 

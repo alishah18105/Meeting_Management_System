@@ -1,0 +1,211 @@
+ .zoom-btn {
+    width: 90px;
+    height: 90px;
+    border: none;
+    border-radius: 20px;
+    /* makes rounded square */
+    font-size: 28px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+  }
+
+  .zoom-btn i {
+    font-size: 42px;
+  }
+
+  .zoom-orange {
+    background-color: #f57c00;
+  }
+
+  /* Zoom orange */
+  .zoom-blue {
+    background-color: #1976d2;
+  }
+
+  /* Blue */
+  .zoom-red {
+    background-color: #d32f2f;
+  }
+
+  /* Red */
+  .zoom-green {
+    background-color: #388e3c;
+  }
+
+  /* Green */
+
+  .zoom-btn:hover {
+    opacity: 0.9;
+  }
+
+  /* Gradient Card Style for Modal */
+  .modal-card {
+    background: linear-gradient(135deg, #6d4ff5, #a569ff);
+    border-radius: 16px;
+    color: white;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+    border: none;
+    padding: 1.2rem;
+  }
+
+  /* White close button */
+  .modal-card .btn-close {
+    filter: invert(1);
+  }
+
+  /* Labels */
+  .modal-card .form-label {
+    font-weight: 600;
+    color: #fff;
+  }
+
+  .modal-card .form-control,
+  .modal-card .form-select,
+  .modal-card textarea {
+    background: white !important;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    color: black !important;
+    /* Input aur select ke andar ka text black */
+    border-radius: 8px;
+  }
+
+  /* Placeholder text ko halka gray karo */
+  .modal-card .form-control::placeholder {
+    color: #6c757d !important;
+    /* Bootstrap ka default gray */
+    opacity: 1;
+  }
+
+  /* Dropdown options bhi black */
+  .modal-card .form-select option {
+    color: black !important;
+  }
+
+  /* Footer buttons */
+  .modal-card .btn-primary {
+    background-color: #4cafef;
+    border: none;
+  }
+
+  .modal-card .btn-secondary {
+    background-color: rgba(255, 255, 255, 0.25);
+    border: none;
+    color: white;
+  }
+
+  /* Keep inputs neat inside modal */
+  .modal-card .form-control {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Special adjustment for Room ID and DateTime fields */
+  .modal-card input[name="room_id"],
+  .modal-card input[name="start_time"],
+  .modal-card input[name="end_time"] {
+    max-width: 85%;
+    /* adjust as needed */
+  }
+
+  .meeting-subtitle {
+    font-size: 1.4rem;
+    font-weight: 500;
+    margin-bottom: 2rem;
+    color: #333;
+  }
+
+  .meeting-card {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
+    width: 320px;
+    /* Fixed width */
+    height: 200px;
+    /* Fixed height */
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  /* Make sure the header and footer adjust nicely */
+  .meeting-header {
+    background: #6d4ff5;
+    color: white;
+    padding: 1rem;
+    flex-shrink: 0;
+  }
+
+  .meeting-cards-grid {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 20px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    scroll-behavior: smooth;
+    white-space: nowrap;
+
+  }
+
+  .meeting-cards-grid::-webkit-scrollbar {
+    height: 8px;
+    /* Scrollbar height */
+  }
+
+  .meeting-cards-grid::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+  }
+
+  .meeting-body {
+    background: #6d4ff5;
+    padding: 1rem;
+    flex-shrink: 0;
+    /* fill available space */
+  }
+
+  .meeting-footer {
+    background: #1c1c1c;
+    padding: 0.8rem 1rem;
+    flex-shrink: 0;
+  }
+
+
+  .meeting-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .meeting-time {
+    font-size: 0.9rem;
+    margin: 4px 0;
+  }
+
+  .meeting-tags .badge {
+    margin-right: 6px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.8);
+  }
+
+  /* Bottom Section */
+
+  .participants img {
+    margin-right: -8px;
+    border: 2px solid #1c1c1c;
+  }
+
+  /* Join Button */
+  .join-btn {
+    background: linear-gradient(135deg, #6d4ff5, #a569ff);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 6px 16px;
+    font-weight: 600;
+  }

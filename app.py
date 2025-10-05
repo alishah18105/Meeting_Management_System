@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 from flask import Flask, flash, request, render_template, redirect, session
 from flask_sqlalchemy import SQLAlchemy
@@ -72,6 +72,41 @@ def loginPage():
 @login_required
 def homePage():
     return render_template('menu.html')
+
+
+@app.route('/instant_meeting', methods = ['GET', 'POST'])
+def instant_meeting():
+    if request.method == 'POST':
+        title = request.form['title']
+        room_id = request.form['room_id']
+        description = request.form['description']
+        status = "Ongoing"
+        start_time = datetime.now()
+        end_time = start_time + timedelta(hours=4)  # For instant meetings, end time can be set later
+
+        user_id = session['user_id']
+
+        # Check if user is organizer
+        organizer = Organizer.query.filter_by(user_id=user_id).first()
+        if not organizer:
+            organizer = Organizer(user_id=user_id)
+            db.session.add(organizer)
+            db.session.commit()
+
+        # Create meeting
+        meeting = Meeting(
+            title=title,
+            room_id=room_id,
+            description=description,
+            status=status,
+            start_time=start_time,
+            end_time=end_time,
+            organizer_id=organizer.organizer_id
+        )
+        db.session.add(meeting)
+        db.session.commit()
+        flash("Instant meeting started successfully!", "success")
+        return redirect('/meeting')
 
 @app.route('/meeting', methods=['GET', 'POST'])
 @login_required
