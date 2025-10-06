@@ -6,12 +6,15 @@ from models import Meeting, Organizer, Participant, db, User
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 from flask import redirect, session, url_for, flash
+from routes.Calendar import calendar_bp 
+
 
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres:ali@localhost:5432/meeting_systemdb"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SECRET_KEY"] = os.urandom(24)
+app.register_blueprint(calendar_bp)
 db.init_app(app)
 
 def login_required(f):
@@ -216,10 +219,18 @@ def update_meeting(meeting_id):
         return redirect('/meeting') 
     return redirect('/meeting')
 
+@app.route('/leave_meeting/<int:meeting_id>', methods=['POST', 'GET'])
+@login_required
+def leave_meeting(meeting_id):
+    user_id = session['user_id']
 
-@app.route('/calendar', methods = ['GET', 'POST'])
-def calendar():
-    return render_template('calender.html')
+    # Check if the participant record exists
+    participant = Participant.query.filter_by(meeting_id=meeting_id, user_id=user_id).first()
+    # Delete participant record
+    db.session.delete(participant)
+    db.session.commit()
+    return redirect('/meeting')
+
 
 @app.route('/logout', methods = ['GET', 'POST'])
 def logout():

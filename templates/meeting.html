@@ -338,8 +338,21 @@
 </div>
 <div class="meeting-cards-grid">
   {% for meeting in joined_meetings %}
-  <div class="meeting-card">
-    <div class="meeting-header">
+  {% if meeting.status != 'Completed' %}
+  <div class="meeting-card position-relative"">
+   <form action="{{ url_for('leave_meeting', meeting_id=meeting.meeting_id) }}" method="POST" 
+      class="position-absolute top-0 end-0 m-2" 
+      data-bs-toggle="tooltip" data-bs-placement="left" title="Leave Meeting">
+  <button 
+    type="submit"
+    class="icon-btn border-0 bg-transparent leave-btn"
+    onclick="return confirm('Are you sure you want to leave this meeting?');">
+    <i class="bi bi-box-arrow-right text-white" style="font-size: 1.4rem;"></i>
+  </button>
+</form>
+
+
+<div class="meeting-header">
       <h5 class="meeting-title">{{ meeting.title }}</h5>
       <p class="meeting-time">
         {{ meeting.start_time.strftime("%b %d, %I:%M %p") }} -
@@ -361,9 +374,10 @@
         <img src="https://i.pravatar.cc/32?img=4" class="rounded-circle" width="32" height="32">
         <span class="text-white">+3</span>
       </div>
-      <a href="#" class="btn join-btn">View Details</a>
+      <a href="#" class="btn join-btn">Join Meeting</a>
     </div>
   </div>
+   {% endif %}
   {% else %}
   <p class="text-muted">You haven’t joined any meetings yet.</p>
   {% endfor %}
@@ -404,6 +418,15 @@ document.addEventListener("DOMContentLoaded", function () {
     setTimeout(() => (copyBtn.textContent = "Copy"), 1500);
   });
 });
+
+
+
+document.addEventListener('DOMContentLoaded', function () {
+  const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+  const tooltipList = [...tooltipTriggerList].map(el => new bootstrap.Tooltip(el));
+});
+
+
 </script>
 
 

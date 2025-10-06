@@ -2,6 +2,26 @@
 {% block title %}Dashboard - Meeting Management{% endblock %}
 
 {% block content %}
+<style>
+    .cards-grid,
+.todo-section {
+  margin-bottom: 50px; /* adds space so footer sits flush at bottom */
+}
+
+/* Optional: ensure min height for dashboard area */
+.dashboard-title {
+  margin-top: 30px;
+}
+
+body {
+  background-color: #f9f9fc;
+}
+
+/* Ensure page content stretches enough to push footer down */
+main.container {
+  min-height: calc(100vh - 160px); /* adjust if your navbar/footer heights differ */
+}
+</style>
 <h2 class="dashboard-title">Welcome to Meeting Management Dashboard</h2>
 <hr>
 

@@ -14,12 +14,14 @@
       background-color: white;
       margin: 0;
       padding: 0;
+
     }
 
     /* Navbar */
     .navbar {
       background-color: #1c1c1c !important;
-      padding: 0.75rem 1.5rem;
+      padding: 0.25rem 1.2rem;
+
     }
 
     .navbar-brand {
@@ -66,7 +68,7 @@
       background-color: whitesmoke;
       border: 1px solid #a569ff;
       color: #000000;
-      width: 600px;
+      width: 300px;
       /* Increased size */
     }
 
@@ -101,18 +103,24 @@
     }
 
     /* Sidebar */
-    .sidebar {
-      position: fixed;
-      top: 80px;
-      left: 0;
-      height: 100%;
-      width: 250px;
-      background-color: #f8f9fa;
-      border-right: 1px solid #ddd;
-      padding: 1rem;
-      transition: all 0.3s ease;
-      overflow: hidden;
-    }
+    /* Sidebar */
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  top: 65px; /* aligned with navbar */
+  left: 0;
+  height: calc(100% - 65px); /* full height below navbar */
+  width: 200px;
+  background-color: #f8f9fa;
+  border-right: 1px solid #ddd;
+  padding: 1rem;
+  transition: all 0.3s ease;
+  overflow-y: auto; /* enable vertical scroll */
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+
 
     .sidebar.collapsed {
       width: 70px;
@@ -123,7 +131,7 @@
       text-align: left;
       padding: 10px;
       font-weight: 500;
-      height: 60px;
+      height: 58px;
       margin-bottom: 12px;
       transition: all 0.3s ease;
       display: flex;
@@ -158,21 +166,14 @@
 
     /*Main Content */
     .content {
-      position: absolute;
-      /* ya fixed dono ek sath mat rakho */
-      top: 80px;
-      /* navbar ke neeche start */
-      left: 250px;
-      /* sidebar ke baad start */
-      right: 0;
-      bottom: 50px;
-      /* footer ke liye space */
-      padding: 2rem;
-      background-color: #fafafa;
-      overflow-y: auto;
-      /* scroll yaha hoga */
-      transition: left 0.3s ease;
-    }
+  margin-left: 200px;
+  margin-top: 65px;
+  padding: 2rem;
+  background-color: #fafafa;
+  min-height: calc(100vh - 65px - 60px); /* navbar + footer height */
+  overflow-y: auto;
+  transition: left 0.3s ease;
+}
 
     .dashboard-title {
       font-size: 1.8rem;
@@ -383,56 +384,52 @@
 
     /* Footer */
     .footer {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      background-color: #1c1c1c;
-      color: white;
-      text-align: center;
-      padding: 0.75rem 0;
-      box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
-      z-index: 999;
-      font-size: 0.9rem;
-    }
+  position: relative;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #1c1c1c;
+  color: white;
+  text-align: center;
+  padding: 0.75rem 0;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 999;
+  font-size: 0.9rem;
+}
   </style>
 </head>
 
 <body>
   <!-- Navbar -->
+  <!-- Navbar -->
   <nav class="navbar navbar-expand-lg fixed-top">
     <div class="container-fluid">
+      <!-- Brand -->
       <a class="navbar-brand" href="{{ url_for('homePage') }}">
         <i class="bi bi-calendar-event"></i> Meeting Management
       </a>
+
+      <!-- Toggler -->
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll">
         <span class="navbar-toggler-icon"></span>
       </button>
 
-      <div class="collapse navbar-collapse" id="navbarScroll">
-        <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll">
-          <li class="nav-item">
-            <a class="nav-link {% if active=='dashboard' %}active{% endif %}" href="{{ url_for('homePage') }}">
-              <i class="bi bi-house-door"></i> Dashboard
-            </a>
-          </li>
-
-        </ul>
-
-        <!-- Search -->
-        <form class="d-flex me-3" role="search">
+      <!-- Navbar Content -->
+      <div class="collapse navbar-collapse justify-content-end" id="navbarScroll">
+        <!-- Search (moved to right side) -->
+        <form class="d-flex align-items-center me-4" role="search">
           <input class="form-control me-2" type="search" placeholder="Search meetings..." />
           <button class="btn btn-outline-success"><i class="bi bi-search"></i></button>
         </form>
 
-        <!-- Notification Bell + Profile (grouped together, right side) -->
-        <ul class="navbar-nav ms-auto d-flex align-items-center">
+        <!-- Notification Bell + Profile -->
+        <ul class="navbar-nav d-flex align-items-center">
           <!-- Notification Bell -->
-          <li class="nav-item dropdown me-2">
-            <a class="nav-link dropdown-toggle position-relative" href="#" id="notificationsDropdown" role="button"
-              data-bs-toggle="dropdown" aria-expanded="false">
+          <li class="nav-item dropdown me-4"> <!-- increased gap here -->
+            <a href="#" class="position-relative" style="display: inline-block;">
               <i class="bi bi-bell" style="font-size: 1.6rem; color: #6d4ff5;"></i>
-              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                style="font-size: 0.65rem; transform: translate(-35%, -30%) !important;">
                 3
               </span>
             </a>
@@ -487,7 +484,7 @@
     <a href="#" class="btn btn-light">
       <i class="bi bi-file-earmark-text"></i> <span class="menu-text">Report</span>
     </a>
-    <a href="{{ url_for('calendar') }}" class="btn btn-light">
+    <a href="{{ url_for('calendar.index') }}" class="btn btn-light">
       <i class="bi bi-calendar3"></i> <span class="menu-text">Calendar</span>
     </a>
     <a href="#" class="btn btn-light">

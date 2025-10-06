@@ -18,11 +18,12 @@ class User(db.Model):
     organizer = db.relationship("Organizer", back_populates="user", uselist=False, cascade="all, delete")
     participants = db.relationship("Participant", back_populates="user", cascade="all, delete")
     notifications = db.relationship("Notification", back_populates="user", cascade="all, delete")
+    events = db.relationship("Event", back_populates="user", cascade="all, delete")
+
 
     def __repr__(self):
         return f"<User {self.name}>"
-
-
+    
 # ----------------------
 # Rooms Table
 # ----------------------
@@ -83,7 +84,6 @@ class Meeting(db.Model):
     def __repr__(self):
         return f"<Meeting {self.title}>"
 
-
 # ----------------------
 # Participants Table
 # ----------------------
@@ -125,3 +125,21 @@ class Notification(db.Model):
 
     def __repr__(self):
         return f"<Notification to user_id={self.user_id} meeting_id={self.meeting_id}>"
+    
+# ---------------
+# Events Table
+# ---------------
+
+class Event(db.Model):
+    __tablename__ = "events"
+    
+    event_id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    event_date = db.Column(db.Date, nullable=False)
+    
+    created_by = db.Column(db.Integer, db.ForeignKey("users.user_id", ondelete="CASCADE", onupdate="CASCADE"), nullable=False)
+    
+    user = db.relationship("User", back_populates="events")
+
+    def _repr_(self):
+        return f"<Event {self.title} on {self.event_date}>"
