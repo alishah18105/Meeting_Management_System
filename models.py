@@ -125,6 +125,7 @@ class Notification(db.Model):
 
     def __repr__(self):
         return f"<Notification to user_id={self.user_id} meeting_id={self.meeting_id}>"
+
     
 # ---------------
 # Events Table
@@ -143,3 +144,7 @@ class Event(db.Model):
 
     def _repr_(self):
         return f"<Event {self.title} on {self.event_date}>"
+
+
+
+

@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 import os
 from flask import Flask, flash, request, render_template, redirect, session
 from flask_sqlalchemy import SQLAlchemy
-from models import Meeting, Organizer, Participant, db, User
+from models import Meeting, Organizer, Participant, db, User, Notification
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 from flask import redirect, session, url_for, flash
@@ -25,6 +25,44 @@ def login_required(f):
             return redirect(url_for('loginPage'))
         return f(*args, **kwargs)
     return decorated_function
+
+@app.context_processor
+def inject_notifications():
+    if 'user_id' in session:
+        user_id = session['user_id']
+        notifications = Notification.query.filter_by(user_id=user_id).order_by(Notification.created_at.desc()).limit(5).all()
+        unread_count = Notification.query.filter_by(user_id=user_id, is_read=False).count()
+    else:
+        notifications, unread_count = [], 0
+    return dict(notifications=notifications, unread_count=unread_count)
+
+
+def create_notification(user_id, meeting_id, message):
+    notification = Notification(
+        user_id=user_id,
+        meeting_id=meeting_id,
+        message=message,
+        created_at=datetime.utcnow(),
+        is_read=False
+    )
+    db.session.add(notification)
+    db.session.commit()
+
+
+@app.route('/notifications')
+@login_required
+def notifications():
+    user_id = session['user_id']
+    # Fetch latest 5 notifications for current user
+    user_notifications = Notification.query.filter_by(user_id=user_id)\
+        .order_by(Notification.created_at.desc())\
+        .limit(5).all()
+
+    # Count unread notifications
+    unread_count = Notification.query.filter_by(user_id=user_id, is_read=False).count()
+
+    return render_template('notifications.html',notifications=user_notifications,unread_count=unread_count)
+
 
 
 
@@ -108,7 +146,6 @@ def instant_meeting():
         )
         db.session.add(meeting)
         db.session.commit()
-        flash("Instant meeting started successfully!", "success")
         return redirect('/meeting')
 
 @app.route('/meeting', methods=['GET', 'POST'])
@@ -143,6 +180,12 @@ def meeting():
         )
         db.session.add(meeting)
         db.session.commit()
+
+        create_notification(
+        user_id= user_id,
+        meeting_id=meeting.meeting_id,
+        message=f"Meeting '{meeting.title}' has been created."
+    )
         return redirect('/meeting')
 
     # Fetch meetings hosted by current user
@@ -178,26 +221,32 @@ def join_meeting():
 
     meeting = Meeting.query.filter_by(meeting_id=meeting_id).first()
     if not meeting:
-        flash("Meeting not found!", "danger")
         return redirect('/meeting')
 
     # check if already joined
     existing = Participant.query.filter_by(meeting_id=meeting_id, user_id=user_id).first()
     if existing:
-        flash("You have already joined this meeting.", "info")
         return redirect('/meeting')
 
     participant = Participant(meeting_id=meeting_id, user_id=user_id, attendance_status="accepted")
     db.session.add(participant)
     db.session.commit()
 
-    flash("Successfully joined the meeting!", "success")
+    create_notification(
+    user_id=user_id,
+    meeting_id=meeting_id,
+    message=f"You joined the meeting '{meeting.title}'."
+    )
+
     return redirect('/meeting')
 
 
 @app.route('/update_meeting/<int:meeting_id>', methods=["POST"])
 def update_meeting(meeting_id):
     meeting = Meeting.query.filter_by(meeting_id=meeting_id).first()
+    old_status = meeting.status
+    old_start = meeting.start_time
+    old_end = meeting.end_time
 
     if request.method == "POST":
         title = request.form.get("title")
@@ -215,7 +264,37 @@ def update_meeting(meeting_id):
         meeting.end_time = end_time
         db.session.add(meeting)       
         db.session.commit()
-        flash("Meeting updated successfully!", "success")
+        if status != old_status:
+            # notify host
+            create_notification(
+                user_id=meeting.organizer.user_id,
+                meeting_id=meeting.meeting_id,
+                message=f"Meeting '{meeting.title}' status changed from {old_status} to {status}."
+            )
+            # notify participants
+            participants = Participant.query.filter_by(meeting_id=meeting.meeting_id).all()
+            for p in participants:
+                create_notification(
+                    user_id=p.user_id,
+                    meeting_id=meeting.meeting_id,
+                    message=f"Meeting '{meeting.title}' status changed from {old_status} to {status}."
+                )
+
+        # 2️⃣ If timing changed
+        if old_start != start_time or old_end != end_time:
+            participants = Participant.query.filter_by(meeting_id=meeting.meeting_id).all()
+            for p in participants:
+                create_notification(
+                    user_id=p.user_id,
+                    meeting_id=meeting.meeting_id,
+                    message=f"Meeting '{meeting.title}' timing updated to {start_time.strftime('%H:%M')} - {end_time.strftime('%H:%M')}."
+                )
+            # notify host too
+            create_notification(
+                user_id=meeting.organizer.user_id,
+                meeting_id=meeting.meeting_id,
+                message=f"Meeting '{meeting.title}' timing updated."
+            )
         return redirect('/meeting') 
     return redirect('/meeting')
 
@@ -230,6 +309,16 @@ def leave_meeting(meeting_id):
     db.session.delete(participant)
     db.session.commit()
     return redirect('/meeting')
+
+@app.route('/notifications')
+@login_required
+def view_all_notifications():
+    user_id = session['user_id']
+    notifications = Notification.query.filter_by(user_id=user_id).order_by(Notification.created_at.desc()).all()
+    for n in notifications:
+        n.is_read = True
+    db.session.commit()
+    return render_template('notifications.html', notifications=notifications)
 
 
 @app.route('/logout', methods = ['GET', 'POST'])

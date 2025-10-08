@@ -7,7 +7,6 @@
 <hr>
 
 
-<!-- Quick Action Buttons (Zoom style) -->
 <!-- Zoom-style Buttons -->
 <div class="d-flex justify-content-around mb-4 flex-wrap">
 
@@ -85,7 +84,7 @@
                 <option value="Scheduled">Scheduled</option>
                 <option value="Ongoing">Ongoing</option>
                 <option value="Completed">Completed</option>
-                <option value="Canceled">Cancelled</option>
+                <option value="Cancelled">Cancelled</option>
               </select>
             </div>
           </div>
@@ -197,7 +196,7 @@
 </div>
 <div class="meeting-cards-grid">
   {% for meeting in hosted_meetings %}
-  {% if meeting.status != 'Completed' %}
+  {% if meeting.status != 'Completed' and meeting.status != 'Cancelled' %}
   <div class="meeting-card position-relative"">
     <button 
   class="icon-btn border-0 bg-transparent position-absolute top-0 end-0 m-2 share-btn"
@@ -274,7 +273,9 @@
                 <select class="form-select" name="status">
                   <option value="Scheduled" {% if meeting.status=="Scheduled" %}selected{% endif %}>Scheduled</option>
                   <option value="Completed" {% if meeting.status=="Completed" %}selected{% endif %}>Completed</option>
-                  <option value="Canceled" {% if meeting.status=="Canceled" %}selected{% endif %}>Canceled</option>
+                  <option value="Cancelled" {% if meeting.status=="Cancelled" %}selected{% endif %}>Cancelled</option>
+                  <option value="Ongoing" {% if meeting.status=="Ongoing" %}selected{% endif %}>Ongoing</option>
+
                 </select>
               </div>
             </div>
@@ -338,7 +339,7 @@
 </div>
 <div class="meeting-cards-grid">
   {% for meeting in joined_meetings %}
-  {% if meeting.status != 'Completed' %}
+  {% if meeting.status != 'Completed' and meeting.status != 'Cancelled' %}
   <div class="meeting-card position-relative"">
    <form action="{{ url_for('leave_meeting', meeting_id=meeting.meeting_id) }}" method="POST" 
       class="position-absolute top-0 end-0 m-2" 

@@ -8,395 +8,7 @@
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
-  <style>
-    body {
-      font-family: "Segoe UI", Arial, sans-serif;
-      background-color: white;
-      margin: 0;
-      padding: 0;
-
-    }
-
-    /* Navbar */
-    .navbar {
-      background-color: #1c1c1c !important;
-      padding: 0.25rem 1.2rem;
-
-    }
-
-    .navbar-brand {
-      color: #a569ff !important;
-      font-weight: 600;
-      font-size: 1.25rem;
-    }
-
-    .navbar-nav .nav-link {
-      color: #fff !important;
-      margin: 0 0.3rem;
-      display: flex;
-      align-items: center;
-      gap: 0.35rem;
-      transition: color 0.3s ease;
-    }
-
-    .navbar-nav .nav-link:hover,
-    .navbar-nav .nav-link.active {
-      color: #a569ff !important;
-    }
-
-    /* Dropdown */
-    .dropdown-menu {
-      background-color: whitesmoke;
-      border: none;
-      border-radius: 0.5rem;
-      padding: 1rem;
-    }
-
-    .dropdown-item {
-      color: #000000;
-      border-radius: 0.35rem;
-      transition: background-color 0.2s ease;
-    }
-
-    .dropdown-item:hover {
-      background-color: #6f42c1;
-      color: white;
-    }
-
-    /* Search bar */
-    .form-control {
-      background-color: whitesmoke;
-      border: 1px solid #a569ff;
-      color: #000000;
-      width: 300px;
-      /* Increased size */
-    }
-
-    .form-control::placeholder {
-      color: #444343;
-    }
-
-    .form-control:focus {
-      border-color: #8a47e9;
-      box-shadow: none;
-      color: #000000;
-    }
-
-    /* Buttons */
-    .btn-outline-success {
-      color: #fff;
-      border-color: #a569ff;
-    }
-
-    .btn-outline-success:hover {
-      background-color: #a569ff;
-      color: #fff;
-    }
-
-    /* Profile avatar */
-    .profile-pic {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid #a569ff;
-    }
-
-    /* Sidebar */
-    /* Sidebar */
-/* Sidebar */
-.sidebar {
-  position: fixed;
-  top: 65px; /* aligned with navbar */
-  left: 0;
-  height: calc(100% - 65px); /* full height below navbar */
-  width: 200px;
-  background-color: #f8f9fa;
-  border-right: 1px solid #ddd;
-  padding: 1rem;
-  transition: all 0.3s ease;
-  overflow-y: auto; /* enable vertical scroll */
-  overflow-x: hidden;
-  box-sizing: border-box;
-}
-
-
-
-    .sidebar.collapsed {
-      width: 70px;
-    }
-
-    .sidebar .btn {
-      width: 100%;
-      text-align: left;
-      padding: 10px;
-      font-weight: 500;
-      height: 58px;
-      margin-bottom: 12px;
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .sidebar.collapsed .btn {
-      text-align: center;
-      padding: 10px 0;
-      font-size: 0;
-    }
-
-    .sidebar.collapsed .btn i {
-      font-size: 1.2rem;
-    }
-
-    .sidebar.collapsed~.content {
-      left: 70px;
-    }
-
-    /* Sidebar toggle button */
-    #sidebarToggle {
-      width: 100%;
-      margin-bottom: 1rem;
-    }
-
-    .sidebar .btn:hover {
-      color: white;
-      background-color: #6d4ff5;
-    }
-
-    /*Main Content */
-    .content {
-  margin-left: 200px;
-  margin-top: 65px;
-  padding: 2rem;
-  background-color: #fafafa;
-  min-height: calc(100vh - 65px - 60px); /* navbar + footer height */
-  overflow-y: auto;
-  transition: left 0.3s ease;
-}
-
-    .dashboard-title {
-      font-size: 1.8rem;
-      font-weight: 600;
-      margin-bottom: 2rem;
-      color: #333;
-    }
-
-    /* Card grid layout */
-    .cards-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      /* Reduced min-width for better responsiveness */
-      gap: 1.5rem;
-    }
-
-    /* Card */
-    .card {
-      background: linear-gradient(135deg, #6d4ff5, #a569ff);
-      border-radius: 16px;
-      color: white;
-      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      border: none;
-    }
-
-    .card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
-    }
-
-    .card-body {
-      padding: 1.5rem;
-    }
-
-    .card-title {
-      font-size: 1.25rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-    }
-
-    .stats-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    .stats-list li {
-      display: flex;
-      justify-content: space-between;
-      padding: 0.25rem 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-      font-size: 0.95rem;
-    }
-
-    .stats-list li:last-child {
-      border-bottom: none;
-    }
-
-    .stats-list span {
-      font-weight: 700;
-    }
-
-    /* To-Do Form */
-    .todo-form {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-
-    }
-
-    .todo-section .section-title {
-      margin-top: 2rem;
-      margin-bottom: 2rem;
-      font-size: 1.8rem;
-      font-weight: 600;
-      margin-bottom: 2rem;
-      color: #333;
-
-    }
-
-
-    .todo-form input {
-      flex: 1;
-      padding: 1.0rem;
-      border-radius: 8px;
-      border: 1px solid #a569ff;
-      max-width: 800px;
-      min-width: 250px;
-    }
-
-    .todo-form button {
-      padding: 0.5rem;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      width: auto;
-      min-width: 100px;
-    }
-
-    #addTodoBtn {
-      background-color: #6d4ff5;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.25rem;
-    }
-
-    #clearTodosBtn {
-      background-color: #a73043;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.25rem;
-    }
-
-    /* Horizontal scroll container */
-    .todo-cards {
-      display: flex;
-      gap: 1rem;
-      overflow-x: auto;
-      padding-bottom: 0.5rem;
-    }
-
-    .todo-cards::-webkit-scrollbar {
-      height: 8px;
-    }
-
-    .todo-cards::-webkit-scrollbar-thumb {
-      background-color: #a569ff;
-      border-radius: 4px;
-    }
-
-    /* Task Card */
-    .todo-card {
-      min-width: 280px;
-      /* Increased for better task display */
-      background-color: #6d4ff5;
-      color: white;
-      padding: 1rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      flex-shrink: 0;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      position: relative;
-    }
-
-    .todo-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-    }
-
-    .todo-card h6 {
-      margin: 0 0 0.5rem 0;
-      font-weight: 600;
-      padding-right: 40px;
-      /* Space for buttons */
-    }
-
-    .todo-card p {
-      font-size: 0.9rem;
-      margin-bottom: 0.5rem;
-
-    }
-
-    .todo-card .due {
-      font-size: 0.8rem;
-      opacity: 0.8;
-      display: block;
-    }
-
-    /* Action buttons on each card */
-    .todo-card .actions {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      display: flex;
-      gap: 4px;
-    }
-
-    .todo-card .actions button {
-      border: none;
-      background: rgba(255, 255, 255, 0.2);
-      color: white;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 0.9rem;
-      padding: 4px 8px;
-      line-height: 1;
-      transition: background 0.2s;
-    }
-
-    .todo-card .actions button:hover {
-      background: rgba(255, 255, 255, 0.5);
-    }
-
-    .completed {
-      opacity: 0.7;
-      text-decoration: line-through;
-    }
-
-    .completed h6,
-    .completed p {
-      text-decoration: line-through;
-    }
-
-    /* Footer */
-    .footer {
-  position: relative;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background-color: #1c1c1c;
-  color: white;
-  text-align: center;
-  padding: 0.75rem 0;
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
-  z-index: 999;
-  font-size: 0.9rem;
-}
-  </style>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/meeting_dashboard.css') }}">
 </head>
 
 <body>
@@ -425,22 +37,35 @@
         <!-- Notification Bell + Profile -->
         <ul class="navbar-nav d-flex align-items-center">
           <!-- Notification Bell -->
-          <li class="nav-item dropdown me-4"> <!-- increased gap here -->
-            <a href="#" class="position-relative" style="display: inline-block;">
+          <li class="nav-item dropdown me-4">
+            <a class="nav-link dropdown-toggle position-relative" href="#" id="notificationsDropdown" role="button"
+              data-bs-toggle="dropdown" aria-expanded="false" style="display: inline-block;">
               <i class="bi bi-bell" style="font-size: 1.6rem; color: #6d4ff5;"></i>
+              {% if unread_count > 0 %}
               <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                style="font-size: 0.65rem; transform: translate(-35%, -30%) !important;">
-                3
+                style="font-size: 0.65rem; transform: translate(-35%, -10%) !important;">
+                {{ unread_count }}
               </span>
+              {% endif %}
             </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsDropdown">
-              <li><a class="dropdown-item" href="#">📌 New meeting scheduled</a></li>
-              <li><a class="dropdown-item" href="#">✅ You joined a meeting</a></li>
-              <li><a class="dropdown-item" href="#">⚡ Reminder: Meeting at 3 PM</a></li>
+              {% if notifications %}
+              {% for n in notifications %}
+              <li>
+                <a class="dropdown-item" href="#">
+                  🕒 {{ n.message }}
+                  <br>
+                  <small class="text-muted">{{ n.created_at.strftime("%b %d, %I:%M %p") }}</small>
+                </a>
+              </li>
+              {% endfor %}
               <li>
                 <hr class="dropdown-divider">
               </li>
               <li><a class="dropdown-item text-center" href="#">View all</a></li>
+              {% else %}
+              <li><a class="dropdown-item text-center text-muted" href="#">No notifications</a></li>
+              {% endif %}
             </ul>
           </li>
 

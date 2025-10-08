@@ -1,0 +1,12 @@
+{% if notifications %}
+  {% for n in notifications %}
+    <li><a class="dropdown-item" href="#">
+      🕒 {{ n.message }}
+      <br><small class="text-muted">{{ n.created_at.strftime("%b %d, %I:%M %p") }}</small>
+    </a></li>
+  {% endfor %}
+  <li><hr class="dropdown-divider"></li>
+  <li><a class="dropdown-item text-center" href="#">View all</a></li>
+{% else %}
+  <li><a class="dropdown-item text-center text-muted" href="#">No notifications</a></li>
+{% endif %}
