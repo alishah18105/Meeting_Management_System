@@ -20,12 +20,12 @@
 
   <!-- Join -->
   <div class="d-flex flex-column align-items-center mx-3">
-  <!-- Trigger Modal -->
-  <button class="zoom-btn zoom-blue" data-bs-toggle="modal" data-bs-target="#joinMeetingModal">
-    <i class="bi bi-box-arrow-in-right"></i>
-  </button>
-  <span class="mt-2">Join</span>
-</div>
+    <!-- Trigger Modal -->
+    <button class="zoom-btn zoom-blue" data-bs-toggle="modal" data-bs-target="#joinMeetingModal">
+      <i class="bi bi-box-arrow-in-right"></i>
+    </button>
+    <span class="mt-2">Join</span>
+  </div>
 
 
   <!-- Schedule -->
@@ -62,9 +62,15 @@
               <label class="form-label">Meeting Title</label>
               <input type="text" class="form-control" name="title" required>
             </div>
-            <div class="col-md-6 d-flex flex-column">
-              <label class="form-label">Room ID</label>
-              <input type="text" class="form-control" style="max-width: 80%;" name="room_id" required>
+
+            <div class="col-md-6">
+              <label for="room_id" class="form-label">Room</label>
+              <select class="form-select" name="room_id" id="room_id" required>
+                <option value="" disabled selected>Select a Room</option>
+                {% for room in rooms %}
+                <option value="{{ room.room_id }}">{{ room.room_name }}</option>
+                {% endfor %}
+              </select>
             </div>
           </div>
 
@@ -119,7 +125,7 @@
     <div class="modal-content modal-card">
       <form id="instantMeetingForm" action="/instant_meeting" method="POST">
         <div class="modal-header">
-          <h5 class="modal-title" id="instantMeetingModal">Create Instant  Meeting</h5>
+          <h5 class="modal-title" id="instantMeetingModal">Create Instant Meeting</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
@@ -130,9 +136,14 @@
               <label class="form-label">Meeting Title</label>
               <input type="text" class="form-control" name="title" required>
             </div>
-            <div class="col-md-6 d-flex flex-column">
-              <label class="form-label">Room ID</label>
-              <input type="text" class="form-control" style="max-width: 80%;" name="room_id" required>
+            <div class="col-md-6">
+              <label for="room_id" class="form-label">Room</label>
+              <select class="form-select" name="room_id" id="room_id" required>
+                <option value="" disabled selected>Select a Room</option>
+                {% for room in rooms %}
+                <option value="{{ room.room_id }}">{{ room.room_name }}</option>
+                {% endfor %}
+              </select>
             </div>
           </div>
 
@@ -199,14 +210,13 @@
   {% if meeting.status != 'Completed' and meeting.status != 'Cancelled' %}
   <div class="meeting-card position-relative"">
     <button 
-  class="icon-btn border-0 bg-transparent position-absolute top-0 end-0 m-2 share-btn"
-  data-meeting-id="{{ meeting.meeting_id }}"
-  data-title="{{ meeting.title }}"
-  data-start="{{ meeting.start_time.strftime('%b %d, %I:%M %p') }}"
-  data-end="{{ meeting.end_time.strftime('%b %d, %I:%M %p') }}">
-  <i class="bi bi-share-fill text-white" style="font-size: 1.2rem;"></i>
-</button>
-    
+  class=" icon-btn border-0 bg-transparent position-absolute top-0 end-0 m-2 share-btn"
+    data-meeting-id="{{ meeting.meeting_id }}" data-title="{{ meeting.title }}"
+    data-start="{{ meeting.start_time.strftime('%b %d, %I:%M %p') }}"
+    data-end="{{ meeting.end_time.strftime('%b %d, %I:%M %p') }}">
+    <i class="bi bi-share-fill text-white" style="font-size: 1.2rem;"></i>
+    </button>
+
     <div class="meeting-header">
       <h5 class="meeting-title">{{ meeting.title }}</h5>
       <p class="meeting-time">
@@ -252,9 +262,14 @@
                 <label class="form-label">Meeting Title</label>
                 <input type="text" class="form-control" name="title" value="{{meeting.title}}" required>
               </div>
-              <div class="col-md-6 d-flex flex-column">
-                <label class="form-label">Room ID</label>
-                <input type="text" class="form-control" name="room_id" value="{{meeting.room_id}}" required>
+              <div class="col-md-6">
+                <label for="room_id" class="form-label">Room</label>
+                <select class="form-select" name="room_id" id="room_id" required>
+                  <option value="" disabled selected>Select a Room</option>
+                  {% for room in rooms %}
+                  <option value="{{ room.room_id }}">{{ room.room_name }}</option>
+                  {% endfor %}
+                </select>
               </div>
             </div>
 
@@ -284,14 +299,12 @@
             <div class="row g-3 mt-2">
               <div class="col-md-6 d-flex flex-column">
                 <label class="form-label">Start Date & Time</label>
-                <input type="datetime-local" class="form-control"
-                  name="start_time"
+                <input type="datetime-local" class="form-control" name="start_time"
                   value="{{ meeting.start_time.strftime('%Y-%m-%dT%H:%M') }}" required>
               </div>
               <div class="col-md-6 d-flex flex-column">
                 <label class="form-label">End Date & Time</label>
-                <input type="datetime-local" class="form-control"
-                  name="end_time"
+                <input type="datetime-local" class="form-control" name="end_time"
                   value="{{ meeting.end_time.strftime('%Y-%m-%dT%H:%M') }}" required>
               </div>
             </div>
@@ -311,23 +324,23 @@
   {% endfor %}
 
   <!-- Share Meeting Modal -->
-<div class="modal fade" id="shareMeetingModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content modal-card">
-      <div class="modal-header">
-        <h5 class="modal-title">Share Meeting Details</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <textarea id="shareText" class="form-control" rows="5" readonly></textarea>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button class="btn btn-primary" id="copyShareText">Copy</button>
+  <div class="modal fade" id="shareMeetingModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content modal-card">
+        <div class="modal-header">
+          <h5 class="modal-title">Share Meeting Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <textarea id="shareText" class="form-control" rows="5" readonly></textarea>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button class="btn btn-primary" id="copyShareText">Copy</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
 </div>
 
@@ -341,19 +354,16 @@
   {% for meeting in joined_meetings %}
   {% if meeting.status != 'Completed' and meeting.status != 'Cancelled' %}
   <div class="meeting-card position-relative"">
-   <form action="{{ url_for('leave_meeting', meeting_id=meeting.meeting_id) }}" method="POST" 
-      class="position-absolute top-0 end-0 m-2" 
-      data-bs-toggle="tooltip" data-bs-placement="left" title="Leave Meeting">
-  <button 
-    type="submit"
-    class="icon-btn border-0 bg-transparent leave-btn"
-    onclick="return confirm('Are you sure you want to leave this meeting?');">
-    <i class="bi bi-box-arrow-right text-white" style="font-size: 1.4rem;"></i>
-  </button>
-</form>
+   <form action=" {{ url_for('leave_meeting', meeting_id=meeting.meeting_id) }}" method="POST"
+    class="position-absolute top-0 end-0 m-2" data-bs-toggle="tooltip" data-bs-placement="left" title="Leave Meeting">
+    <button type="submit" class="icon-btn border-0 bg-transparent leave-btn"
+      onclick="return confirm('Are you sure you want to leave this meeting?');">
+      <i class="bi bi-box-arrow-right text-white" style="font-size: 1.4rem;"></i>
+    </button>
+    </form>
 
 
-<div class="meeting-header">
+    <div class="meeting-header">
       <h5 class="meeting-title">{{ meeting.title }}</h5>
       <p class="meeting-time">
         {{ meeting.start_time.strftime("%b %d, %I:%M %p") }} -
@@ -378,7 +388,7 @@
       <a href="#" class="btn join-btn">Join Meeting</a>
     </div>
   </div>
-   {% endif %}
+  {% endif %}
   {% else %}
   <p class="text-muted">You haven’t joined any meetings yet.</p>
   {% endfor %}
@@ -387,45 +397,45 @@
 
 
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-  const shareButtons = document.querySelectorAll(".share-btn");
-  const shareModal = new bootstrap.Modal(document.getElementById("shareMeetingModal"));
-  const shareTextArea = document.getElementById("shareText");
-  const copyBtn = document.getElementById("copyShareText");
+  document.addEventListener("DOMContentLoaded", function () {
+    const shareButtons = document.querySelectorAll(".share-btn");
+    const shareModal = new bootstrap.Modal(document.getElementById("shareMeetingModal"));
+    const shareTextArea = document.getElementById("shareText");
+    const copyBtn = document.getElementById("copyShareText");
 
-  shareButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-      const id = btn.dataset.meetingId;
-      const title = btn.dataset.title;
-      const start = btn.dataset.start;
-      const end = btn.dataset.end;
+    shareButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const id = btn.dataset.meetingId;
+        const title = btn.dataset.title;
+        const start = btn.dataset.start;
+        const end = btn.dataset.end;
 
-      // Calculate duration (simple way)
-      const startTime = new Date(start);
-      const endTime = new Date(end);
-      const duration = ((endTime - startTime) / (1000 * 60 * 60)).toFixed(1) + " hrs";
+        // Calculate duration (simple way)
+        const startTime = new Date(start);
+        const endTime = new Date(end);
+        const duration = ((endTime - startTime) / (1000 * 60 * 60)).toFixed(1) + " hrs";
 
-      const text = `Meeting ID: ${id}\nTitle: ${title}\nStart Time: ${start}\nDuration: ${duration}`;
-      shareTextArea.value = text;
+        const text = `Meeting ID: ${id}\nTitle: ${title}\nStart Time: ${start}\nDuration: ${duration}`;
+        shareTextArea.value = text;
 
-      shareModal.show();
+        shareModal.show();
+      });
+    });
+
+    copyBtn.addEventListener("click", () => {
+      shareTextArea.select();
+      document.execCommand("copy");
+      copyBtn.textContent = "Copied!";
+      setTimeout(() => (copyBtn.textContent = "Copy"), 1500);
     });
   });
 
-  copyBtn.addEventListener("click", () => {
-    shareTextArea.select();
-    document.execCommand("copy");
-    copyBtn.textContent = "Copied!";
-    setTimeout(() => (copyBtn.textContent = "Copy"), 1500);
+
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipList = [...tooltipTriggerList].map(el => new bootstrap.Tooltip(el));
   });
-});
-
-
-
-document.addEventListener('DOMContentLoaded', function () {
-  const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-  const tooltipList = [...tooltipTriggerList].map(el => new bootstrap.Tooltip(el));
-});
 
 
 </script>

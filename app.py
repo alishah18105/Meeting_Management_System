@@ -124,6 +124,7 @@ def homePage():
 
 @app.route('/instant_meeting', methods = ['GET', 'POST'])
 def instant_meeting():
+    rooms = Room.query.all()
     if request.method == 'POST':
         title = request.form['title']
         room_id = request.form['room_id']
@@ -133,6 +134,7 @@ def instant_meeting():
         end_time = start_time + timedelta(hours=4)  # For instant meetings, end time can be set later
 
         user_id = session['user_id']
+        
 
         # Check if user is organizer
         organizer = Organizer.query.filter_by(user_id=user_id).first()
@@ -154,10 +156,11 @@ def instant_meeting():
         db.session.add(meeting)
         db.session.commit()
         return redirect('/meeting')
-
+    return render_template('meeting.html', rooms=rooms)
 @app.route('/meeting', methods=['GET', 'POST'])
 @login_required
 def meeting():
+    rooms = Room.query.all()
     if request.method == 'POST':
         title = request.form['title']
         room_id = request.form['room_id']
@@ -167,6 +170,7 @@ def meeting():
         end_time = datetime.fromisoformat(request.form['end_time'])
 
         user_id = session['user_id']
+        
 
         # Check if user is organizer
         organizer = Organizer.query.filter_by(user_id=user_id).first()
@@ -216,7 +220,8 @@ def meeting():
     return render_template(
         'meeting.html',
         hosted_meetings=hosted_meetings,
-        joined_meetings=joined_meetings
+        joined_meetings=joined_meetings,
+        rooms = rooms
     )
 
 @app.route('/join_meeting', methods=['POST'])
@@ -225,7 +230,7 @@ def join_meeting():
     meeting_id_str = request.form['meeting_id']   # e.g. "00001"
     meeting_id = int(meeting_id_str) 
     user_id = session['user_id']
-
+    
     meeting = Meeting.query.filter_by(meeting_id=meeting_id).first()
     if not meeting:
         return redirect('/meeting')
@@ -250,6 +255,7 @@ def join_meeting():
 
 @app.route('/update_meeting/<int:meeting_id>', methods=["POST"])
 def update_meeting(meeting_id):
+    rooms = Room.query.all()
     meeting = Meeting.query.filter_by(meeting_id=meeting_id).first()
     old_status = meeting.status
     old_start = meeting.start_time
@@ -303,7 +309,7 @@ def update_meeting(meeting_id):
                 message=f"Meeting '{meeting.title}' timing updated."
             )
         return redirect('/meeting') 
-    return redirect('/meeting')
+    return render_template('meeting.html', rooms=rooms)
 
 @app.route('/leave_meeting/<int:meeting_id>', methods=['POST', 'GET'])
 @login_required
