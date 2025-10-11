@@ -3,17 +3,9 @@ from flask import Blueprint,render_template,request,redirect,url_for,flash,sessi
 import calendar
 from datetime import datetime
 from functools import wraps
+from utilis.auth import login_required
 
 calendar_bp=Blueprint("calendar",__name__,template_folder="../templates")
-
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if 'user_id' not in session:
-            flash("Please login first to access this page.", "warning")
-            return redirect(url_for('loginPage'))
-        return f(*args, **kwargs)
-    return decorated_function
 
 
 #Calendar View

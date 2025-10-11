@@ -3,16 +3,8 @@ from datetime import datetime,timedelta
 from functools import wraps
 from models import db,Todo,Meeting,Organizer,Participant,Notification,Event,Room
 from sqlalchemy import func 
+from utilis.auth import login_required
 dashboard_bp=Blueprint("dashboard",__name__,template_folder="../templates")
-
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if 'user_id' not in session:
-            flash("Please login first to access this page.", "warning")
-            return redirect(url_for('loginPage'))
-        return f(*args, **kwargs)
-    return decorated_function
 
 def get_dashboard():
     user_id=session.get("user_id")

@@ -354,7 +354,7 @@
   {% for meeting in joined_meetings %}
   {% if meeting.status != 'Completed' and meeting.status != 'Cancelled' %}
   <div class="meeting-card position-relative"">
-   <form action=" {{ url_for('leave_meeting', meeting_id=meeting.meeting_id) }}" method="POST"
+   <form action=" {{ url_for('meeting.leave_meeting', meeting_id=meeting.meeting_id) }}" method="POST"
     class="position-absolute top-0 end-0 m-2" data-bs-toggle="tooltip" data-bs-placement="left" title="Leave Meeting">
     <button type="submit" class="icon-btn border-0 bg-transparent leave-btn"
       onclick="return confirm('Are you sure you want to leave this meeting?');">
