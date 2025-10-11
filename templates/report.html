@@ -1,0 +1,368 @@
+{% extends "MeetingDashboard.html" %}
+{% block content %}
+<style>
+    html,
+    body {
+        height: 100%;
+        margin: 0;
+    }
+
+    body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        background-color: #f9f9fc;
+    }
+    /* Force-disable effect */
+.disabled-select,
+.disabled-dropdown {
+  pointer-events: none !important;
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+}
+
+.disabled-dropdown::after {
+  opacity: 0.4 !important;
+}
+
+
+    main.container {
+        flex: 1;
+        background-color: #f9f9fc;
+    }
+
+    /* ✅ White label text */
+    .form-label {
+        color: white;
+        font-weight: 500;
+    }
+
+    /* ✅ Card overlap but add cleaner spacing below */
+    .report-section {
+        position: relative;
+        z-index: 10;
+        margin-bottom: 0;
+        /* no negative overlap */
+    }
+
+    /* ✅ Result section moved further down */
+    .result-section {
+        position: relative;
+        z-index: 1;
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 25px;
+        margin-top: 60px;
+        /* increased space between both cards */
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    /* ✅ Fix for status dropdown: white background, black text */
+    #status {
+        background-color: white !important;
+        color: black !important;
+        border: 1px solid #ced4da;
+    }
+
+    #status:hover,
+    #status:focus {
+        background-color: white !important;
+        color: black !important;
+        border-color: #6d4ff5 !important;
+        box-shadow: 0 0 5px rgba(109, 79, 245, 0.4);
+    }
+
+    /* ✅ Fix "Status" dropdown hover — stay white, no green */
+    .btn-outline-secondary {
+        background-color: white !important;
+        color: black !important;
+        border: 1px solid #ced4da !important;
+    }
+
+    .btn-outline-secondary:hover,
+    .btn-outline-secondary:focus,
+    .btn-outline-secondary:active,
+    .show>.btn-outline-secondary.dropdown-toggle {
+        background-color: white !important;
+        color: black !important;
+        border-color: #6d4ff5 !important;
+        /* optional purple border */
+        box-shadow: 0 0 5px rgba(109, 79, 245, 0.4) !important;
+    }
+
+    .btn-outline-secondary.dropdown-toggle {
+        text-align: left !important;
+        padding-left: 12px !important;
+        position: relative;
+    }
+
+    /* ✅ Keep caret (arrow) on right and vertically centered */
+    .btn-outline-secondary.dropdown-toggle::after {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        margin-left: 0;
+    }
+
+
+    .disabled-select {
+    opacity: 0.6 !important;
+    cursor: not-allowed !important;
+}
+
+.btn-outline-secondary:disabled {
+    pointer-events: none;
+    opacity: 0.6 !important;
+    cursor: not-allowed !important;
+}
+</style>
+
+
+
+<h2 class="dashboard-title">Reports Dashboard</h2>
+<h3 class="dashboard-subtitle">Generate meeting summaries, participants, room usage and more.</h3>
+
+<div class="report-section container mt-4">
+    <div class="card shadow-sm p-4" style="background: linear-gradient(135deg, #6d4ff5, #9a73ff); border: none;">
+        <h5 class="fw-semibold mb-3"><i class="bi bi-funnel"></i> Filter Reports</h5>
+
+        <form id="reportFilter" method="POST" action="/report">
+            <!-- First row -->
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Report Type</label>
+                    <select name="report_type" class="form-select" id="reportType" required>
+                        <option value="Meeting_Summary">Meeting Summary</option>
+                        <option value="Participant_Report">Participant Report</option>
+                        <option value="Room_Utilization">Room Utilization</option>
+                        <option value="Notifications">Notifications</option>
+                        <option value="Event_Summary">Event Summary</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3 me-3">
+                    <label class="form-label">Start Date</label>
+                    <input type="date" class="form-control" id="startDate" name="start_date">
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">End Date</label>
+                    <input type="date" class="form-control" id="endDate" name="end_date">
+                </div>
+
+                <div class="col-md-2 ms-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-graph-up"></i> Generate Report
+                    </button>
+                </div>
+            </div>
+
+            <!-- Second row (Status checkboxes) -->
+            <div class="row mt-3">
+                <div class="col-md-3">
+                    <label class="form-label" for="status">Status</label>
+                    <div class="dropdown w-100">
+                        <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Select Status
+                        </button>
+                        <ul class="dropdown-menu p-3" style="width: 100%;">
+                            <li>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="status" value="Scheduled"
+                                        id="scheduledCheck">
+                                    <label class="form-check-label" for="scheduledCheck">Scheduled</label>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="status" value="Completed"
+                                        id="completedCheck">
+                                    <label class="form-check-label" for="completedCheck">Completed</label>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="status" value="Ongoing"
+                                        id="ongoingCheck">
+                                    <label class="form-check-label" for="ongoingCheck">Ongoing</label>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="status" value="Cancelled"
+                                        id="cancelledCheck">
+                                    <label class="form-check-label" for="cancelledCheck">Cancelled</label>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label text-white">Meeting Title</label>
+                    <select class="form-select" id="title" name="title">
+                        <option value="">Select Meeting</option>
+                        {% for meeting in meetings %}
+                        <option value="{{ meeting.meeting_id }}">{{ meeting.title }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<div class="container mt-4">
+    <div class="card shadow-sm p-4">
+        <h5 class="fw-semibold mb-3"><i class="bi bi-bar-chart-fill"></i> Report Results</h5>
+
+        <div id="reportResults">
+            {% if report_data %}
+            {% if report_type == 'Meeting_Summary' %}
+            <!-- 🟦 Meeting Summary Table -->
+            <table class="table table-striped table-hover mt-3">
+                <thead class="table-primary">
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Room</th>
+                        <th>Status</th>
+                        <th>Participants</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in report_data %}
+                    <tr>
+                        <td>{{ row.meeting_id }}</td>
+                        <td>{{ row.title }}</td>
+                        <td>{{ row.meeting_date }}</td>
+                        <td>{{ row.meeting_time }}</td>
+                        <td>{{ row.room_name }}</td>
+                        <td>{{ row.status }}</td>
+                        <td>{{ row.participants }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            {% elif report_type == 'Participant_Report' %}
+            <!-- 🟨 Participant Summary Table -->
+            <table class="table table-striped table-hover mt-3">
+                <thead class="table-primary">
+                    <tr>
+                        <th>S.No</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Attendance Status</th>
+                        <th>Joined At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in report_data %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ row.name }}</td>
+                        <td>{{ row.email }}</td>
+                        <td>{{ row.attendance_status }}</td>
+                        <td>{{ row.joined_at }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+            {% else %}
+            <p style="color: white !important;">
+                Select filters and click “Generate Report” to view results.
+            </p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const reportType = document.getElementById("reportType");
+  const titleSelect = document.getElementById("title");
+  const startDate = document.getElementById("startDate");
+  const endDate = document.getElementById("endDate");
+  const statusButton = document.querySelector(".dropdown-toggle");
+  const statusMenu = document.querySelector(".dropdown-menu");
+  const statusChecks = document.querySelectorAll("input[name='status']");
+
+  // 🔹 Normal disable for inputs & selects
+  function disableField(el) {
+    el.disabled = true;
+    el.style.pointerEvents = "none";
+    el.style.opacity = "0.6";
+    el.style.backgroundColor = "#e9ecef";
+    el.classList.add("disabled-select");
+  }
+
+  function enableField(el) {
+    el.disabled = false;
+    el.style.pointerEvents = "auto";
+    el.style.opacity = "1";
+    el.style.backgroundColor = "white";
+    el.classList.remove("disabled-select");
+  }
+
+  // 🔹 Special handling for Bootstrap dropdown
+  function disableDropdown() {
+    statusButton.classList.add("disabled-dropdown");
+    statusButton.style.pointerEvents = "none";
+    statusButton.style.opacity = "0.6";
+    statusButton.style.cursor = "not-allowed";
+    statusButton.removeAttribute("data-bs-toggle"); // Prevent open
+    statusMenu.classList.add("d-none"); // Hide dropdown items
+    statusChecks.forEach(c => (c.disabled = true));
+  }
+
+  function enableDropdown() {
+    statusButton.classList.remove("disabled-dropdown");
+    statusButton.style.pointerEvents = "auto";
+    statusButton.style.opacity = "1";
+    statusButton.style.cursor = "pointer";
+    statusButton.setAttribute("data-bs-toggle", "dropdown");
+    statusMenu.classList.remove("d-none");
+    statusChecks.forEach(c => (c.disabled = false));
+  }
+
+  // 🔹 Main toggle logic
+  function toggleFields() {
+    const selected = reportType.value;
+
+    if (selected === "Participant_Report") {
+      // ✅ Only meeting title active
+      enableField(titleSelect);
+      disableField(startDate);
+      disableField(endDate);
+      disableDropdown();
+    } 
+    else if (selected === "Meeting_Summary") {
+      // ✅ Dates and status active, title disabled
+      disableField(titleSelect);
+      enableField(startDate);
+      enableField(endDate);
+      enableDropdown();
+    } 
+    else {
+      // ✅ Everything enabled (default)
+      enableField(titleSelect);
+      enableField(startDate);
+      enableField(endDate);
+      enableDropdown();
+    }
+  }
+
+  // 🔹 Run on load + on change
+  toggleFields();
+  reportType.addEventListener("change", toggleFields);
+});
+</script>
+{% endblock %}
