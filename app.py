@@ -1,5 +1,7 @@
+from ctypes import cast
 from datetime import datetime, timedelta
 from email.mime import text
+from operator import or_
 import os
 from flask import Flask, flash, request, render_template, redirect, session
 from flask_sqlalchemy import SQLAlchemy
@@ -8,9 +10,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 from flask import redirect, session, url_for, flash
 from routes.Calendar import calendar_bp 
-from sqlalchemy import func
-
-
+from sqlalchemy import func, cast, Numeric, or_
+from routes.todo import todo_bp
+from routes.dashboard import dashboard_bp
 
 
 app = Flask(__name__)
@@ -18,6 +20,8 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres:ali@localhost:543
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SECRET_KEY"] = os.urandom(24)
 app.register_blueprint(calendar_bp)
+app.register_blueprint(todo_bp)
+app.register_blueprint(dashboard_bp)
 db.init_app(app)
 
 def login_required(f):
@@ -328,8 +332,6 @@ def view_all_notifications():
 def logout():
     return render_template('login.html')
 
-from datetime import datetime
-from sqlalchemy import func
 
 @app.route('/report', methods=['GET', 'POST'])
 @login_required
@@ -364,10 +366,49 @@ def report():
                 )
                 report_data = query.all()
 
-        if report_type == 'Meeting_Summary':
-            user_id = session['user_id']
-            organizer = Organizer.query.filter_by(user_id=user_id).first()
+        if report_type == 'Room_Utilization_Report':
+            if organizer:
+                query = (
+                    db.session.query(
+                        Room.room_name,
+                        func.coalesce(func.string_agg(Meeting.title, ', '), 'No meetings held').label('meeting_names'),
+                        func.count(Meeting.meeting_id).label('total_meetings'),
+                        func.coalesce(
+                            func.round(
+                                cast(
+                                    func.sum(
+                                        func.extract('epoch', Meeting.end_time - Meeting.start_time) / 3600.0
+                                    ), Numeric
+                                ), 1
+                            ), 0
+                        ).label('total_duration_hours')
+                    )
+                    .outerjoin(Meeting, Room.room_id == Meeting.room_id)
+                    .filter(or_(Meeting.organizer_id == organizer.organizer_id, Meeting.organizer_id == None))
+                    .group_by(Room.room_name)
+                    .order_by(func.count(Meeting.meeting_id).desc())
+                )
 
+                # ✅ Date filters
+                if start_date and end_date:
+                    start_dt = datetime.strptime(start_date, '%Y-%m-%d')
+                    end_dt = datetime.strptime(end_date, '%Y-%m-%d')
+                    end_dt = end_dt.replace(hour=23, minute=59, second=59)
+                    query = query.filter(Meeting.start_time.between(start_dt, end_dt))
+
+                elif start_date:
+                    start_dt = datetime.strptime(start_date, '%Y-%m-%d')
+                    query = query.filter(Meeting.start_time >= start_dt)
+
+                elif end_date:
+                    end_dt = datetime.strptime(end_date, '%Y-%m-%d')
+                    end_dt = end_dt.replace(hour=23, minute=59, second=59)
+                    query = query.filter(Meeting.start_time <= end_dt)
+                report_data = query.all()
+
+
+        if report_type == 'Meeting_Summary':
+            
             if organizer:
                 query = (
                     db.session.query(

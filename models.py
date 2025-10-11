@@ -19,6 +19,7 @@ class User(db.Model):
     participants = db.relationship("Participant", back_populates="user", cascade="all, delete")
     notifications = db.relationship("Notification", back_populates="user", cascade="all, delete")
     events = db.relationship("Event", back_populates="user", cascade="all, delete")
+    todos = db.relationship("Todo", back_populates="user", cascade="all, delete")
 
 
     def __repr__(self):
@@ -145,6 +146,25 @@ class Event(db.Model):
     def _repr_(self):
         return f"<Event {self.title} on {self.event_date}>"
 
+# ---------------
+# Todo Table
+# ---------------
+
+class Todo(db.Model):
+    _tablename_ = "todo"
+
+    todo_id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    status = db.Column(db.String(20), default="pending")
+    created_by = db.Column(
+        db.Integer,
+        db.ForeignKey("users.user_id", ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False
+    )
+    user = db.relationship("User", back_populates="todos")
+
+    def _repr_(self):
+        return f"<Todo {self.title} - Status: {self.status}>"
 
 
 

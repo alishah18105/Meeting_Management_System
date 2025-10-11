@@ -135,9 +135,8 @@
                     <select name="report_type" class="form-select" id="reportType" required>
                         <option value="Meeting_Summary">Meeting Summary</option>
                         <option value="Participant_Report">Participant Report</option>
-                        <option value="Room_Utilization">Room Utilization</option>
-                        <option value="Notifications">Notifications</option>
-                        <option value="Event_Summary">Event Summary</option>
+                        <option value="Room_Utilization_Report">Room Utilization Report</option>
+                        
                     </select>
                 </div>
 
@@ -275,6 +274,32 @@
                     {% endfor %}
                 </tbody>
             </table>
+            
+
+            {% elif report_type == 'Room_Utilization_Report' %}
+            <!-- Report Utilization Table -->
+            <table class="table table-striped table-hover mt-3">
+                <thead class="table-primary">
+                    <tr>
+                        <th>S.No</th>
+                        <th>Room Name</th>
+                        <th>Meeting Names</th>
+                        <th>Total Meetings</th>
+                        <th>Duration (Hrs)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in report_data %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ row.room_name }}</td>
+                        <td>{{ row.meeting_names }}</td>
+                        <td>{{ row.total_meetings }}</td>
+                        <td>{{ row.total_duration_hours }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
             {% endif %}
             {% else %}
             <p style="color: white !important;">
@@ -351,6 +376,13 @@ document.addEventListener("DOMContentLoaded", function () {
       enableField(endDate);
       enableDropdown();
     } 
+
+    else if (selected == "Room_Utilization_Report"){
+        disableField(titleSelect);
+        disableDropdown();
+        enableField(startDate);
+        enableField(endDate);
+    }
     else {
       // ✅ Everything enabled (default)
       enableField(titleSelect);
