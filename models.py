@@ -74,6 +74,7 @@ class Meeting(db.Model):
     status = db.Column(db.String(20), default="Scheduled")
     organizer_id = db.Column(db.Integer, db.ForeignKey("organizers.organizer_id", ondelete="CASCADE", onupdate="CASCADE"), nullable=False)
     room_id = db.Column(db.Integer, db.ForeignKey("rooms.room_id", ondelete="CASCADE", onupdate="CASCADE"), nullable=False)
+    summary = db.Column(db.Text,  default='You haven’t added a summary yet')
     
     # Relationships
     organizer = db.relationship("Organizer", back_populates="meetings")

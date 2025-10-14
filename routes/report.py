@@ -1,6 +1,6 @@
 from sqlalchemy import cast
 from operator import or_
-from flask import Blueprint, render_template, request, redirect, session
+from flask import Blueprint, render_template, request, redirect, session, url_for
 from datetime import datetime, timedelta
 from sqlalchemy import Numeric, func
 from models import Participant, User, db, Meeting, Room, Organizer
@@ -12,6 +12,7 @@ report_bp = Blueprint('report', __name__,template_folder="../templates")
 @login_required
 def report():
     report_data = []
+    single_meeting = False
     user_id = session['user_id']
     organizer = Organizer.query.filter_by(user_id=user_id).first()
 
@@ -25,6 +26,7 @@ def report():
         end_date = request.form.get('end_date')
         selected_statuses = request.form.getlist('status')
         title = request.form.get('title')
+        
 
         if report_type == 'Participant_Report':
             if title:  # only fetch if meeting selected
@@ -89,19 +91,30 @@ def report():
                     db.session.query(
                         Meeting.meeting_id,
                         Meeting.title,
+                        Meeting.summary,
                         func.date(Meeting.start_time).label('meeting_date'),
                         func.to_char(Meeting.start_time, 'HH12:MI AM').label('meeting_time'),
                         Room.room_name,
                         Meeting.status,
-                        func.count(Participant.participant_id).label('participants')
+                        func.count(Participant.participant_id).label('participants'),
+                        func.coalesce(
+                        func.round(
+                            cast(
+                                func.extract('epoch', (Meeting.end_time - Meeting.start_time)) / 3600.0, Numeric
+                            ), 1
+                        ), 0
+                    ).label('duration')
                     )
                     .outerjoin(Participant, Participant.meeting_id == Meeting.meeting_id)
                     .join(Room, Room.room_id == Meeting.room_id)
                     .filter(Meeting.organizer_id == organizer.organizer_id)
                     .group_by(Meeting.meeting_id, Room.room_name)
                 )
+                if title:
+                    query = query.filter(Meeting.meeting_id == title)
+                    single_meeting = True
 
-                if start_date and end_date:
+                elif start_date and end_date:
                     start_dt = datetime.strptime(start_date, '%Y-%m-%d')
                     end_dt = datetime.strptime(end_date, '%Y-%m-%d')
                     end_dt = end_dt.replace(hour=23, minute=59, second=59)
@@ -124,7 +137,24 @@ def report():
                 report_data = query.all()
 
 
-    return render_template('report.html', report_data=report_data, meetings=meetings, report_type=request.form.get('report_type'))
+    return render_template('report.html', 
+                           report_data=report_data, meetings=meetings, 
+                           report_type=request.form.get('report_type'),
+                           single_meeting=single_meeting)
 
+#---------------------------------------------------------------------------------------------------
+@report_bp.route('/add_summary', methods=['POST'])
+@login_required
+def add_summary():
+    meeting_id = request.form.get('meeting_id')
+    summary_text = request.form.get('summary')
+
+    meeting = Meeting.query.get(meeting_id)
+    if meeting:
+        meeting.summary = summary_text or "No summary added yet."
+        db.session.commit()
+
+    # ✅ Redirect back to the same page that shows all meetings
+    return redirect(url_for('report.report', report_type='Meeting_Summary'))
 
 

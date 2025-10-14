@@ -216,5 +216,16 @@ def leave_meeting(meeting_id):
     db.session.commit()
     return redirect(url_for('meeting.meeting'))
 
+#----------------------------------------------------------------------------------------------------
+@meeting_bp.route('/delete_meeting/<int:meeting_id>', methods=['POST'])
+@login_required
+def delete_meeting(meeting_id):
+    meeting = Meeting.query.get(meeting_id)
+    if meeting:
+        db.session.delete(meeting)
+        db.session.commit()
+        
+    return render_template('report.html')
+
 
 

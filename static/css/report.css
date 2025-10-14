@@ -1,0 +1,116 @@
+html,
+    body {
+        height: 100%;
+        margin: 0;
+    }
+
+    body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        background-color: #f9f9fc;
+    }
+
+    /* Force-disable effect */
+    .disabled-select,
+    .disabled-dropdown {
+        pointer-events: none !important;
+        opacity: 0.6 !important;
+        cursor: not-allowed !important;
+    }
+
+    .disabled-dropdown::after {
+        opacity: 0.4 !important;
+    }
+
+
+    main.container {
+        flex: 1;
+        background-color: #f9f9fc;
+    }
+
+    /* ✅ White label text */
+    .form-label {
+        color: white;
+        font-weight: 500;
+    }
+
+    /* ✅ Card overlap but add cleaner spacing below */
+    .report-section {
+        position: relative;
+        z-index: 10;
+        margin-bottom: 0;
+        /* no negative overlap */
+    }
+
+    /* ✅ Result section moved further down */
+    .result-section {
+        position: relative;
+        z-index: 1;
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 25px;
+        margin-top: 60px;
+        /* increased space between both cards */
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    /* ✅ Fix for status dropdown: white background, black text */
+    #status {
+        background-color: white !important;
+        color: black !important;
+        border: 1px solid #ced4da;
+    }
+
+    #status:hover,
+    #status:focus {
+        background-color: white !important;
+        color: black !important;
+        border-color: #6d4ff5 !important;
+        box-shadow: 0 0 5px rgba(109, 79, 245, 0.4);
+    }
+
+    /* ✅ Fix "Status" dropdown hover — stay white, no green */
+    .btn-outline-secondary {
+        background-color: white !important;
+        color: black !important;
+        border: 1px solid #ced4da !important;
+    }
+
+    .btn-outline-secondary:hover,
+    .btn-outline-secondary:focus,
+    .btn-outline-secondary:active,
+    .show>.btn-outline-secondary.dropdown-toggle {
+        background-color: white !important;
+        color: black !important;
+        border-color: #6d4ff5 !important;
+        /* optional purple border */
+        box-shadow: 0 0 5px rgba(109, 79, 245, 0.4) !important;
+    }
+
+    .btn-outline-secondary.dropdown-toggle {
+        text-align: left !important;
+        padding-left: 12px !important;
+        position: relative;
+    }
+
+    /* ✅ Keep caret (arrow) on right and vertically centered */
+    .btn-outline-secondary.dropdown-toggle::after {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        margin-left: 0;
+    }
+
+
+    .disabled-select {
+        opacity: 0.6 !important;
+        cursor: not-allowed !important;
+    }
+
+    .btn-outline-secondary:disabled {
+        pointer-events: none;
+        opacity: 0.6 !important;
+        cursor: not-allowed !important;
+    }
