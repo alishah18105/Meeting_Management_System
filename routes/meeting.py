@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, session, url_for
+from flask import Blueprint, jsonify, render_template, request, redirect, session, url_for
 from utilis.auth import login_required
 from utilis.create_notifications import create_notification
 from datetime import datetime, timedelta
@@ -107,7 +107,7 @@ def join_meeting():
 
 #----------------------------------------------------------------------------------------------------
 
-@meeting_bp.route('/instant_meeting', methods=['GET', 'POST'])
+@meeting_bp.route('/instant_meeting', methods=['POST'])
 def instant_meeting():
     rooms = Room.query.all()
     if request.method == 'POST':
@@ -116,7 +116,7 @@ def instant_meeting():
         description = request.form['description']
         status = "Ongoing"
         start_time = datetime.now()
-        end_time = start_time + timedelta(hours=4)  # Instant meeting default duration
+        end_time = start_time + timedelta(hours=4)
 
         user_id = session['user_id']
 
@@ -127,7 +127,6 @@ def instant_meeting():
             db.session.add(organizer)
             db.session.commit()
 
-        # Create new meeting
         meeting = Meeting(
             title=title,
             room_id=room_id,
@@ -140,9 +139,12 @@ def instant_meeting():
         db.session.add(meeting)
         db.session.commit()
 
-        return redirect(url_for('meeting.meeting'))
-
-    return render_template('meeting.html', rooms=rooms)
+        return jsonify({
+            "meeting_id": meeting.meeting_id,
+            "title": meeting.title,
+            "organizer_id": meeting.organizer_id,
+            "user_id": user_id
+        })
 
 #----------------------------------------------------------------------------------------------------
 @meeting_bp.route('/update_meeting/<int:meeting_id>', methods=["POST"])
