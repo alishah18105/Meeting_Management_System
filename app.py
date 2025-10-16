@@ -33,10 +33,16 @@ db.init_app(app)
 def inject_notifications():
     if 'user_id' in session:
         user_id = session['user_id']
-        notifications = Notification.query.filter_by(user_id=user_id).order_by(Notification.created_at.desc()).limit(5).all()
-        unread_count = Notification.query.filter_by(user_id=user_id, is_read=False).count()
+        # ✅ Show only unread notifications in dropdown
+        notifications = Notification.query.filter_by(
+            user_id=user_id, is_read=False
+        ).order_by(Notification.created_at.desc()).limit(5).all()
+
+        # Count of unread notifications
+        unread_count = len(notifications)
     else:
         notifications, unread_count = [], 0
+
     return dict(notifications=notifications, unread_count=unread_count)
 
 #-----------------------------------------------------------------------------------------------------

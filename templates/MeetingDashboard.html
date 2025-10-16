@@ -52,7 +52,8 @@
               {% if notifications %}
               {% for n in notifications %}
               <li>
-                <a class="dropdown-item" href="#">
+                <a class="dropdown-item mark-read"
+                  href="{{ url_for('notification.notification_read', notification_id=n.notification_id) }}">
                   🕒 {{ n.message }}
                   <br>
                   <small class="text-muted">{{ n.created_at.strftime("%b %d, %I:%M %p") }}</small>
@@ -90,8 +91,7 @@
 
 
   <div id="sidebar" class="sidebar">
-    <!-- Toggle Button -->
-    <!-- Sidebar Links -->
+
     <a href="{{ url_for('homePage') }}" class="btn btn-light">
       <i class="bi bi-list"></i> <span class="menu-text">Menu</span>
     </a>
@@ -130,16 +130,7 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    const sidebar = document.getElementById('sidebar');
-    const toggleButtons = document.querySelectorAll('#sidebar button, #sidebar a');
 
-    toggleButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        sidebar.classList.toggle('collapsed');
-      });
-    });
-  </script>
 </body>
 
 </html>

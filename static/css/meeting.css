@@ -201,11 +201,30 @@
   }
 
   /* Join Button */
-  .join-btn {
-    background: linear-gradient(135deg, #6d4ff5, #a569ff);
-    color: white;
-    border: none;
-    border-radius: 12px;
-    padding: 6px 16px;
-    font-weight: 600;
-  }
+.join-btn {
+  background: linear-gradient(135deg, #6d4ff5, #a569ff);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 6px 16px;
+  font-weight: 600;
+  transition: 0.3s;
+}
+.join-btn:hover {
+  background: linear-gradient(135deg, #5b3ee6, #934fff);
+  transform: scale(1.05);
+}
+
+.edit-btn {
+  background: linear-gradient(135deg, #ff8a3d, #ff4b2b);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 6px 16px;
+  font-weight: 600;
+  transition: 0.3s;
+}
+.edit-btn:hover {
+  background: linear-gradient(135deg, #ff7a1c, #e43a1b);
+  transform: scale(1.05);
+}

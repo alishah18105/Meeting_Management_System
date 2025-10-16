@@ -72,7 +72,8 @@ def meeting():
         'meeting.html',
         hosted_meetings=hosted_meetings,
         joined_meetings=joined_meetings,
-        rooms=rooms
+        rooms=rooms,
+        user_name=session.get('user_name')
     )
 
 #-----------------------------------------------------------------------------------------------------

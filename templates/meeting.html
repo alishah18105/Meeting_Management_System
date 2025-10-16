@@ -3,6 +3,8 @@
 
 <link rel="stylesheet" href="{{ url_for('static', filename='css/meeting.css') }}">
 <script src="https://meet.jit.si/external_api.js"></script>
+<script src="{{ url_for('static', filename='js/meeting.js') }}"></script>
+<script> const currentUserName = "{{ user_name }}"; </script>
 
 <h2 class="dashboard-title">Meetings</h2>
 <hr>
@@ -201,7 +203,7 @@
   </div>
 </div>
 
-<!-- Hosted Meetings -->
+<!-- Hosted Meetings --------------------------------------------------------------------------------->
 <div class="mt-5 mb-4">
   <h5 class="meeting-subtitle">Hosted By You</h5>
   <hr>
@@ -240,8 +242,13 @@
         <img src="https://i.pravatar.cc/32?img=2" class="rounded-circle" width="32" height="32">
         <span class="text-white">+5</span>
       </div>
-      <a href="#" class="btn join-btn">Join Meeting</a>
-      <button class="btn join-btn" data-bs-toggle="modal" data-bs-target="#editMeetingModal{{meeting.meeting_id}}">
+      {% if meeting.status == 'Ongoing' %}
+      <a href="#" class="btn join-btn" data-title="{{ meeting.title }}">Join Meeting</a>
+      {% else %}
+      <a href="#" class="btn join-btn disabled" data-title="{{ meeting.title }}"
+        style="opacity: 0.6; cursor: not-allowed;">Join Meeting</a>
+      {% endif %}
+      <button class="btn edit-btn" data-bs-toggle="modal" data-bs-target="#editMeetingModal{{meeting.meeting_id}}">
         Edit
       </button>
     </div>
@@ -348,7 +355,7 @@
 </div>
 
 
-<!-- Joined Meetings -->
+<!-- Joined Meetings---------------------------------------------------------------------------------->
 <div class="mt-5 mb-4">
   <h5 class="meeting-subtitle">Joined Meetings</h5>
   <hr>
@@ -388,7 +395,11 @@
         <img src="https://i.pravatar.cc/32?img=4" class="rounded-circle" width="32" height="32">
         <span class="text-white">+3</span>
       </div>
+      {% if meeting.status == 'Ongoing' %}
       <a href="#" class="btn join-btn">Join Meeting</a>
+      {% else %}
+      <a href="#" class="btn join-btn disabled" style="opacity: 0.6; cursor: not-allowed;">Join Meeting</a>
+      {% endif %}
     </div>
   </div>
   {% endif %}
@@ -400,122 +411,7 @@
 <script src="https://meet.jit.si/external_api.js"></script>
 
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const shareButtons = document.querySelectorAll(".share-btn");
-    const shareModal = new bootstrap.Modal(document.getElementById("shareMeetingModal"));
-    const shareTextArea = document.getElementById("shareText");
-    const copyBtn = document.getElementById("copyShareText");
-
-    shareButtons.forEach(btn => {
-      btn.addEventListener("click", () => {
-        const id = btn.dataset.meetingId;
-        const title = btn.dataset.title;
-        const start = btn.dataset.start;
-        const end = btn.dataset.end;
-
-        // Calculate duration (simple way)
-        const startTime = new Date(start);
-        const endTime = new Date(end);
-        const duration = ((endTime - startTime) / (1000 * 60 * 60)).toFixed(1) + " hrs";
-
-        const text = `Meeting ID: ${id}\nTitle: ${title}\nStart Time: ${start}\nDuration: ${duration}`;
-        shareTextArea.value = text;
-
-        shareModal.show();
-      });
-    });
-
-    copyBtn.addEventListener("click", () => {
-      shareTextArea.select();
-      document.execCommand("copy");
-      copyBtn.textContent = "Copied!";
-      setTimeout(() => (copyBtn.textContent = "Copy"), 1500);
-    });
-  });
-
-
-
-  document.addEventListener('DOMContentLoaded', function () {
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    const tooltipList = [...tooltipTriggerList].map(el => new bootstrap.Tooltip(el));
-  });
-  function startMeeting() {
-    // ✅ Get the modal element first
-    const modalElement = document.getElementById('instantMeetingModal');
-
-    // ✅ Safely find the input inside the modal
-    const titleInput = modalElement.querySelector('input[name="title"]');
-    const meetingTitle = titleInput ? titleInput.value.trim() : "";
-
-    if (!meetingTitle) {
-      alert("Please enter a meeting title before starting.");
-      return;
-    }
-
-    // ✅ Close modal properly
-    const modal = bootstrap.Modal.getInstance(modalElement);
-    if (modal) modal.hide();
-
-    // ✅ Create Jitsi container
-    const container = document.createElement('div');
-    container.id = 'jitsiContainer';
-    Object.assign(container.style, {
-      position: 'fixed',
-      top: '0',
-      left: '0',
-      width: '100vw',
-      height: '100vh',
-      zIndex: '9999'
-    });
-    document.body.appendChild(container);
-
-    // ✅ Setup Jitsi meeting
-    const domain = "jitsi.riot.im";
-    const roomName = meetingTitle.replace(/\s+/g, "_") + "_" + Date.now(); // unique room name
-
-    const options = {
-      roomName: roomName,
-      parentNode: container,
-      width: "100%",
-      height: "100%",
-
-      // 🧠 IMPORTANT FIXES HERE
-      configOverwrite: {
-        disableDeepLinking: true,
-        prejoinPageEnabled: false,        // disable pre-join screen
-        enableLobby: false,
-        prejoinPageEnabled: false,
-        enableWelcomePage: false,
-        requireDisplayName: false,
-        lobby: { enable: false }          // disable lobby mode
-      },
-
-      interfaceConfigOverwrite: {
-        SHOW_JITSI_WATERMARK: false,
-        SHOW_WATERMARK_FOR_GUESTS: false,
-        TOOLBAR_BUTTONS: [
-          'microphone', 'camera', 'chat', 'raisehand',
-          'tileview', 'hangup', 'desktop', 'fullscreen', 'participants-pane'
-        ],
-      },
-
-      userInfo: {
-        displayName: "Host" // later you can pass Flask session username here
-      }
-    };
-
-    const api = new JitsiMeetExternalAPI(domain, options);
-
-    // ✅ Handle meeting close
-    api.addEventListener('readyToClose', () => {
-      api.dispose();
-      container.remove();
-
-      // optional: redirect back to your meeting dashboard
-      window.location.href = "/meeting";
-    });
-  }
-
+  
 
 </script>
 
