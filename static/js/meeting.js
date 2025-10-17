@@ -36,23 +36,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     const tooltipList = [...tooltipTriggerList].map(el => new bootstrap.Tooltip(el));
   });
-  function startMeeting(meetingTitleFromCard = null) {
-  let meetingTitle = meetingTitleFromCard;
-
+  
+  
+  function startMeeting(meetingTitle, meetingId, role) {
   if (!meetingTitle) {
-    const modalElement = document.getElementById('instantMeetingModal');
-    const titleInput = modalElement ? modalElement.querySelector('input[name="title"]') : null;
-    meetingTitle = titleInput ? titleInput.value.trim() : "";
-  }
-
-  if (!meetingTitle) {
-    alert("Please enter a meeting title before starting.");
+    alert("Meeting title not found.");
     return;
   }
-
-  const modalElement = document.getElementById('instantMeetingModal');
-  const modal = bootstrap.Modal.getInstance(modalElement);
-  if (modal) modal.hide();
 
   const container = document.createElement('div');
   container.id = 'jitsiContainer';
@@ -67,7 +57,17 @@ document.addEventListener("DOMContentLoaded", function () {
   document.body.appendChild(container);
 
   const domain = "jitsi.riot.im";
-  const roomName = meetingTitle.replace(/\s+/g, "_") + "_" + Date.now();
+  const roomName = meetingTitle.replace(/\s+/g, "_") + "_" + meetingId;
+
+  // 🧩 Host has full toolbar; participants have limited controls
+  const hostToolbar = [
+    'microphone', 'camera', 'chat', 'raisehand',
+    'tileview', 'hangup', 'desktop', 'fullscreen', 'participants-pane', 'mute-everyone'
+  ];
+
+  const participantToolbar = [
+    'microphone', 'camera', 'chat', 'raisehand', 'tileview', 'hangup'
+  ];
 
   const options = {
     roomName: roomName,
@@ -79,40 +79,47 @@ document.addEventListener("DOMContentLoaded", function () {
       prejoinPageEnabled: false,
       enableLobby: false,
       enableWelcomePage: false,
-      requireDisplayName: false,
-      lobby: { enable: false }
+      requireDisplayName: false
     },
     interfaceConfigOverwrite: {
       SHOW_JITSI_WATERMARK: false,
       SHOW_WATERMARK_FOR_GUESTS: false,
-      TOOLBAR_BUTTONS: [
-        'microphone', 'camera', 'chat', 'raisehand',
-        'tileview', 'hangup', 'desktop', 'fullscreen', 'participants-pane'
-      ],
+      TOOLBAR_BUTTONS: role === "host" ? hostToolbar : participantToolbar,
     },
     userInfo: {
-       displayName: currentUserName || "Host"
+      displayName: currentUserName || (role === "host" ? "Host" : "Participant")
     }
   };
 
   const api = new JitsiMeetExternalAPI(domain, options);
 
-  // ✅ Handle meeting close
-  api.addEventListener('readyToClose', () => {
-    api.dispose();
-    container.remove();
-    window.location.href = "/meeting";
-  });
+  // ✅ Only host can end the meeting for everyone
+  if (role === "host") {
+    api.addEventListener('readyToClose', () => {
+      api.dispose();
+      container.remove();
+      window.location.href = "/meeting";
+    });
+  } else {
+    api.addEventListener('readyToClose', () => {
+      api.dispose();
+      container.remove();
+    });
+  }
 }
 
-  document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.join-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       if (btn.classList.contains('disabled')) return;
       const meetingTitle = btn.getAttribute('data-title');
-      startMeeting(meetingTitle);
+      const meetingId = btn.getAttribute('data-id');
+      const role = btn.getAttribute('data-role');
+      startMeeting(meetingTitle, meetingId, role);
     });
   });
 });
+
+
 

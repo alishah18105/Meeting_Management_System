@@ -243,10 +243,18 @@
         <span class="text-white">+5</span>
       </div>
       {% if meeting.status == 'Ongoing' %}
-      <a href="#" class="btn join-btn" data-title="{{ meeting.title }}">Join Meeting</a>
+      <a href="#" 
+      class="btn join-btn"
+      data-title="{{ meeting.title }}"  
+      data-id="{{ meeting.meeting_id }}"
+      data-role = "host">
+        Join Meeting
+      </a>
       {% else %}
-      <a href="#" class="btn join-btn disabled" data-title="{{ meeting.title }}"
-        style="opacity: 0.6; cursor: not-allowed;">Join Meeting</a>
+      <a href="#" class="btn join-btn disabled" data-title="{{ meeting.title }}" data-id="{{ meeting.meeting_id }}"
+        style="opacity: 0.6; cursor: not-allowed;">
+        Join Meeting
+      </a>
       {% endif %}
       <button class="btn edit-btn" data-bs-toggle="modal" data-bs-target="#editMeetingModal{{meeting.meeting_id}}">
         Edit
@@ -396,10 +404,21 @@
         <span class="text-white">+3</span>
       </div>
       {% if meeting.status == 'Ongoing' %}
-      <a href="#" class="btn join-btn">Join Meeting</a>
-      {% else %}
-      <a href="#" class="btn join-btn disabled" style="opacity: 0.6; cursor: not-allowed;">Join Meeting</a>
-      {% endif %}
+  <a href="#" class="btn join-btn" 
+     data-title="{{ meeting.title }}" 
+     data-id="{{ meeting.meeting_id }}"
+     data-role="participant"> 
+     Join Meeting
+  </a>
+{% else %}
+  <a href="#" class="btn join-btn disabled" 
+     data-title="{{ meeting.title }}" 
+     data-id="{{ meeting.meeting_id }}"
+     data-role="participant"
+     style="opacity: 0.6; cursor: not-allowed;">
+     Join Meeting
+  </a>
+{% endif %}
     </div>
   </div>
   {% endif %}
@@ -411,7 +430,7 @@
 <script src="https://meet.jit.si/external_api.js"></script>
 
 <script>
-  
+
 
 </script>
 
