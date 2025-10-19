@@ -1,0 +1,298 @@
+{% extends "MeetingDashboard.html" %}
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+ <style>
+  .profile-container {
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 40px 50px;
+    transition: all 0.3s ease;
+    background-color: #6f42c1;
+    color:white;
+  }
+
+  .profile-container:hover {
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  .profile-header {
+    text-align: center;
+    margin-bottom: 35px;
+    color:white;
+  }
+
+  .profile-header i {
+    font-size: 60px;
+    color:white;
+  }
+
+  .profile-header h3 {
+    margin-top: 10px;
+    font-weight: 700;
+    color:white;
+  }
+
+  .profile-table th {
+    width: 220px;
+    font-weight: 600;
+    padding: 12px 0 6px;
+    vertical-align: top;
+    color:white;
+  }
+
+  .profile-table td {
+    padding: 12px 0 6px;
+    vertical-align: top;
+    color:white;
+  }
+
+  .field-note {
+    font-size: 13px;
+    font-style: italic;
+    margin-top: 4px;
+    color:white;
+  }
+
+  .section-title {
+    margin-top: 40px;
+    margin-bottom: 15px;
+    font-size: 18px;
+    font-weight: 700;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 8px;
+    color:white;
+  }
+
+   .btn-outline-secondary {
+    border: none;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    font-weight: 500;
+    transition: background 0.2s ease;
+  }
+
+  .btn-outline-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.35);
+  }
+
+  .btn-primary {
+    border-radius: 12px;
+    padding: 12px 28px;
+    background: linear-gradient(135deg, #ffffff, #e0e0e0);
+    color: #6f42c1;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    border: none;
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+  }
+
+  .btn-primary:hover {
+    background: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.4);
+    color: #6f42c1;
+  }
+
+  .back-btn {
+    display: inline-block;
+    width: 100%;
+    max-width: 260px;
+    margin: 40px auto 0;
+    text-align: center;
+    background: linear-gradient(135deg, #ffffff, #e0e0e0);
+    color: #6f42c1;
+    font-weight: 700;
+    padding: 12px;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.3);
+  }
+
+  .back-btn:hover {
+    background: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.4);
+    color: #6f42c1;
+  }
+  .form-control {
+    border-radius: 10px;
+    border: none;
+    padding: 10px 14px;
+    font-size: 15px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    width: 100%;
+    transition: all 0.25s ease;
+  }
+
+  .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .form-control:focus {
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.4);
+  }
+
+  #pwField {
+    border: none;
+    border-radius: 10px;
+    padding: 8px 12px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    width: 100%;
+  }
+
+  #pwField::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+ </style> 
+
+
+
+<div class="profile-container">
+  <div class="profile-header">
+    <i class="bi bi-person-circle"></i>
+    <h3>My Profile</h3>
+    <div class="alert alert-warning alert-dismissible fade show mt-3 shadow-sm" role="alert" style="border-radius: 12px;">
+  <strong>Privacy Notice:</strong><br>
+  When you join meetings, webinars, chats or channels hosted on Zoom, your profile information, 
+  including your name and profile picture, may be visible to other participants or members. 
+  Your name and email address will also be visible to the account owner and host when you join meetings, 
+  on their account while you’re signed in. The account owner and others in 
+  the meeting can share this information with apps and others.
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+    </div>
+
+  <!-- ACCOUNT INFO -->
+  <h5 class="section-title">Account Information</h5>
+  <table class="table-borderless profile-table">
+    <tr>
+      <th>Username</th>
+      <td>
+        {{ username }}
+       
+      </td>
+    </tr>
+    <tr>
+      <th>Email</th>
+      <td>
+        {{ email }}
+       
+      </td>
+    </tr>
+    <tr>
+      <th>Password</th>
+      <td>
+        <div class="d-flex align-items-center">
+          <input id="pwField" type="password"
+                 value="{{ plain_password if plain_password else '' }}"
+                 readonly
+                 placeholder="{{ 'Not available' if not plain_password else '' }}"
+                 style="max-width: 280px;" />
+          {% if plain_password %}
+          <button id="togglePw" class="btn btn-outline-secondary btn-sm ms-2" type="button">Show</button>
+          {% else %}
+          <small class="text-muted ms-2">Password not stored (secure)</small>
+          {% endif %}
+        </div>
+        
+      </td>
+    </tr>
+    <tr>
+      <th>Login Time</th>
+      <td>
+        {{ login_time }}
+       
+      </td>
+    </tr>
+  </table>
+
+  <!-- PERSONAL INFO -->
+  <form method="POST">
+    <h5 class="section-title">Personal Information</h5>
+    <table class="table-borderless profile-table">
+      <tr>
+        <th>Full Name</th>
+        <td>
+          {{ username }}
+         
+        </td>
+      </tr>
+      <tr>
+        <th>Email</th>
+        <td>
+          {{ email }}
+        
+        </td>
+      </tr>
+      <tr>
+        <th>Role / Designation</th>
+        <td>
+          <input type="text" name="role" class="form-control" value="{{ role or '' }}" placeholder="Optional">
+         
+        </td>
+      </tr>
+      <tr>
+        <th>Department / Team</th>
+        <td>
+          <input type="text" name="department" class="form-control" value="{{ department or '' }}" placeholder="Optional">
+          
+        </td>
+      </tr>
+      <tr>
+        <th>Phone Number</th>
+        <td>
+          <input type="text" name="phone" class="form-control" value="{{ phone or '' }}" placeholder="Optional">
+        
+        </td>
+      </tr>
+      <tr>
+        <th>Date of Birth</th>
+        <td>
+          <input type="date" name="dob" class="form-control" value="{{ dob or '' }}">
+          
+        </td>
+      </tr>
+      <tr>
+        <th>Address</th>
+        <td>
+          <input type="text" name="address" class="form-control" value="{{ address or '' }}" placeholder="Optional">
+         
+        </td>
+      </tr>
+    </table>
+
+    <div class="text-center mt-4">
+      <button type="submit" class="btn btn-primary px-4">Save Changes</button>
+    </div>
+  </form>
+
+  <a href="{{ url_for('homePage') }}" class="back-btn mt-4">← Back to Dashboard</a>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const toggle = document.getElementById('togglePw');
+    const pwField = document.getElementById('pwField');
+    if (toggle) {
+      toggle.addEventListener('click', function() {
+        if (pwField.type === 'password') {
+          pwField.type = 'text';
+          toggle.textContent = 'Hide';
+        } else {
+          pwField.type = 'password';
+          toggle.textContent = 'Show';
+        }
+      });
+    }
+  });
+</script>
+{% endblock %}

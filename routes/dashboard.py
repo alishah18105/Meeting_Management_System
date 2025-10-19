@@ -89,6 +89,39 @@ def get_dashboard():
             .all()
     )
     todos=Todo.query.filter_by(created_by=user_id).all()
+    summarized_meetings=Meeting.query.filter(Meeting.summary.isnot(None),
+                                             Meeting.summary !="").count()
+  
+    pending_summaries=Meeting.query.filter(
+        Meeting.status=="Completed",
+        (Meeting.summary.is_(None)) | (Meeting.summary=="")
+    ).count()
+
+    
+    total_participants = Participant.query.count()
+    joined_participants = Participant.query.filter_by(attendance_status='Joined').count()
+    avg_attendance_rate = (joined_participants / total_participants * 100) if total_participants > 0 else 0
+    total_participants_joined = Participant.query.filter_by(attendance_status='Joined').count()
+
+    total_meetings_with_participants = (
+        db.session.query(func.count(func.distinct(Participant.meeting_id))).scalar()
+    )
+    avg_participants_per_meeting = (
+        total_participants_joined / total_meetings_with_participants
+        if total_meetings_with_participants > 0 else 0
+    )
+
+    total_reports_generated = Meeting.query.filter(
+        Meeting.summary.isnot(None),
+        Meeting.summary != ""
+    ).count()
+
+ 
+    report_categories_breakdown = (
+        db.session.query(Meeting.status, func.count(Meeting.meeting_id))
+        .group_by(Meeting.status)
+        .all()
+    )
 
     return{
             "scheduled_meetings":scheduled_meetings,
@@ -103,8 +136,16 @@ def get_dashboard():
             "utilization":utilization,
             "most_used_rooms":most_used_rooms,
             "events_this_week":events_this_week,
-            "next_meeting":next_meeting
-    }
+            "next_meeting":next_meeting,
+            "summarized_meetings":summarized_meetings,
+            "avg_attendance_rate": avg_attendance_rate,
+            "total_participants_joined": total_participants_joined,
+            "avg_participants_per_meeting": avg_participants_per_meeting,
+       
+       
+      
+}
+    
 @dashboard_bp.route("/home")  
 @login_required
 def home():

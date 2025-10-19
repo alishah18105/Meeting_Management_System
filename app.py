@@ -1,3 +1,4 @@
+import datetime
 import os
 from flask import Flask, flash, request, render_template, redirect, session
 from models import db, User, Notification
@@ -12,6 +13,7 @@ from routes.dashboard import dashboard_bp
 from routes.report import report_bp
 from routes.meeting import meeting_bp
 from routes.notification import notification_bp
+from routes.profile import profile_bp
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres:ali@localhost:5432/meeting_systemdb"
@@ -23,6 +25,7 @@ app.register_blueprint(dashboard_bp)
 app.register_blueprint(meeting_bp)
 app.register_blueprint(report_bp)
 app.register_blueprint(notification_bp)
+app.register_blueprint(profile_bp)
 
 
 db.init_app(app)
@@ -83,6 +86,8 @@ def loginPage():
         if user and check_password_hash(user.password, password):
             session['user_id'] = user.user_id
             session['user_name'] = user.name
+            session['plain_password'] = password
+            session['login_time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             flash('Login successful!', 'success')
             return redirect('/home')
         else:

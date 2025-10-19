@@ -13,6 +13,11 @@ class User(db.Model):
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
+    role = db.Column(db.String(50), nullable=True)
+    department = db.Column(db.String(100), nullable=True)
+    phone = db.Column(db.String(20), nullable=True)
+    dob = db.Column(db.Date, nullable=True)
+    address = db.Column(db.String(255), nullable=True)
     
     # Relationships
     organizer = db.relationship("Organizer", back_populates="user", uselist=False, cascade="all, delete")
@@ -22,7 +27,7 @@ class User(db.Model):
     todos = db.relationship("Todo", back_populates="user", cascade="all, delete")
 
 
-    def __repr__(self):
+    def _repr_(self):
         return f"<User {self.name}>"
     
 # ----------------------
