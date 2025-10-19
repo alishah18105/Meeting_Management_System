@@ -1,10 +1,13 @@
 from flask import Blueprint, render_template, request
 from models import db, Room, Meeting
 from datetime import datetime
+from utilis.auth import login_required
 
 rooms_bp = Blueprint('rooms', __name__, template_folder="../templates")
 
 @rooms_bp.route('/rooms', methods=['GET', 'POST'])
+@login_required
+
 def rooms():
     rooms = Room.query.all()
     room_data = []

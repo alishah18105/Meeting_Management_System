@@ -90,7 +90,6 @@ def loginPage():
             session['user_name'] = user.name
             session['plain_password'] = password
             session['login_time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            flash('Login successful!', 'success')
             return redirect('/home')
         else:
             flash('Invalid email or password', 'danger')

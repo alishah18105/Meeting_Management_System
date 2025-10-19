@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, render_template, request, redirect, session, url_for
+from flask import Blueprint, flash, jsonify, render_template, request, redirect, session, url_for
 from utilis.auth import login_required
 from utilis.create_notifications import create_notification
 from datetime import datetime, timedelta
@@ -22,12 +22,29 @@ def meeting():
 
         user_id = session['user_id']
 
-        # ✅ Ensure organizer exists
+        # Ensure organizer exists
         organizer = Organizer.query.filter_by(user_id=user_id).first()
         if not organizer:
             organizer = Organizer(user_id=user_id)
             db.session.add(organizer)
             db.session.commit()
+        
+        # Check if the selected room is already booked for the same time
+        overlapping_meeting = Meeting.query.filter(
+            Meeting.room_id == room_id,
+            Meeting.start_time < end_time,
+            Meeting.end_time > start_time,
+            Meeting.status.in_(["Scheduled", "Ongoing"])  # booked or ongoing
+        ).first()
+
+        if overlapping_meeting:
+            flash(
+                f"❌ Room '{overlapping_meeting.room.room_name}' is already booked "
+                f"from {overlapping_meeting.start_time.strftime('%Y-%m-%d %H:%M')} "
+                f"to {overlapping_meeting.end_time.strftime('%Y-%m-%d %H:%M')}.",
+                "danger"
+            )
+            return redirect(url_for('meeting.meeting'))
 
         # ✅ Create meeting
         meeting = Meeting(
@@ -127,6 +144,8 @@ def instant_meeting():
             organizer = Organizer(user_id=user_id)
             db.session.add(organizer)
             db.session.commit()
+        
+        
 
         meeting = Meeting(
             title=title,
@@ -163,6 +182,23 @@ def update_meeting(meeting_id):
         status = request.form.get("status")
         start_time = datetime.fromisoformat(request.form['start_time'])
         end_time = datetime.fromisoformat(request.form['end_time'])
+
+         # Check if the selected room is already booked for the same time
+        overlapping_meeting = Meeting.query.filter(
+            Meeting.room_id == room_id,
+            Meeting.start_time < end_time,
+            Meeting.end_time > start_time,
+            Meeting.status.in_(["Scheduled", "Ongoing"])  # booked or ongoing
+        ).first()
+
+        if overlapping_meeting:
+            flash(
+                f"❌ Room '{overlapping_meeting.room.room_name}' is already booked "
+                f"from {overlapping_meeting.start_time.strftime('%Y-%m-%d %H:%M')} "
+                f"to {overlapping_meeting.end_time.strftime('%Y-%m-%d %H:%M')}.",
+                "danger"
+            )
+            return redirect(url_for('meeting.meeting'))
 
         meeting.title = title
         meeting.room_id = room_id
