@@ -20,13 +20,24 @@ def rooms():
             end_dt = datetime.strptime(f"{date_str} {end_time_str}", "%Y-%m-%d %H:%M")
 
             for room in rooms:
+                # Check meetings overlapping with the selected time
                 overlapping_meetings = Meeting.query.filter(
                     Meeting.room_id == room.room_id,
                     Meeting.start_time < end_dt,
                     Meeting.end_time > start_dt
                 ).all()
 
-                is_available = len(overlapping_meetings) == 0
+                # Room is booked if any overlapping meeting exists
+                # or any ongoing meeting (status='Ongoing')
+                is_available = True
+                for meeting in overlapping_meetings:
+                    if meeting.status.lower() == "ongoing":
+                        is_available = False
+                        break
+
+                if overlapping_meetings and is_available:
+                    # If there are overlapping but not ongoing, still unavailable
+                    is_available = False
 
                 room_data.append({
                     'room_name': room.room_name,
@@ -34,15 +45,16 @@ def rooms():
                     'is_available': is_available
                 })
         else:
-            # Missing input case
             room_data = []
+
     else:
         now = datetime.now()
         for room in rooms:
+            # Check if any meeting is ongoing right now OR marked as 'Ongoing'
             current_meeting = Meeting.query.filter(
                 Meeting.room_id == room.room_id,
-                Meeting.start_time <= now,
-                Meeting.end_time >= now
+                ((Meeting.start_time <= now) & (Meeting.end_time >= now)) |
+                (Meeting.status.ilike('Ongoing'))
             ).first()
 
             is_available = current_meeting is None
