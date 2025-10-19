@@ -1,0 +1,86 @@
+{% extends "MeetingDashboard.html" %}
+{% block content %}
+<h2 class="dashboard-title">Available Rooms</h2>
+<h3 class="dashboard-subtitle">View all meeting rooms and check their availability by date and time.</h3>
+<hr>
+<div class="room-section container mt-4">
+    <div class="card shadow-sm p-4" style="background: linear-gradient(135deg, #6d4ff5, #9a73ff); border: none;">
+        <h5 class="fw-semibold mb-3 text-white">
+            <i class="bi bi-door-open"></i> Room Availability Filter
+        </h5>
+
+        <form id="roomFilter" method="POST" action="/rooms">
+            <!-- Row 1: Date, Start Time, End Time -->
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label text-white">Date</label>
+                    <input type="date" class="form-control" id="roomDate" name="room_date" required>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label text-white">Start Time</label>
+                    <input type="time" class="form-control" id="startTime" name="start_time" required>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label text-white">End Time</label>
+                    <input type="time" class="form-control" id="endTime" name="end_time" required>
+                </div>
+            </div>
+
+            <!-- Row 2: Search Button (Right Aligned) -->
+            <div class="row mt-4">
+                <div class="col text-end">
+                    <button type="submit" class="btn btn-primary fw-semibold px-4">
+                        <i class="bi bi-search"></i> Search
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="container mt-4">
+    <div class="card shadow-sm p-4">
+        <h5 class="fw-semibold mb-3">
+            <i class="bi bi-door-open-fill"></i> Room Availability Results
+        </h5>
+
+        <div id="roomResults">
+            {% if room_data %}
+                <table class="table table-striped table-hover mt-3">
+                    <thead class="table-primary">
+                        <tr>
+                            <th>S. No</th>
+                            <th>Room Name</th>
+                            <th>Status</th>
+                            <th>Capacity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for room in room_data %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{{ room.room_name }}</td>
+                            <td>
+                                {% if room.is_available %}
+                                    <span class="badge bg-success">Available</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Booked</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ room.capacity }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="alert alert-info mt-3">
+                    <i class="bi bi-info-circle"></i> No room data available for the selected date and time.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
