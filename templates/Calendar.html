@@ -31,7 +31,7 @@
 /* Right Side Panel */
 .side-container {
     flex: 0 0 33%;
-    background: #fff;
+    background: linear-gradient(135deg, #6d4ff5, #9a73ff);;
     border-radius: 16px;
     padding: 20px;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
@@ -74,7 +74,7 @@
 /* Upcoming Events */
 .upcoming-events-card {
     margin-top: 2rem;
-    background: #ffffff;
+    background: (135deg, #6d4ff5, #9a73ff);
     border-radius: 14px;
     border: 1px solid #e2e2e2;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
@@ -208,7 +208,9 @@
 </style>
 
 
-<h2 class="mb-4 dashboard-title">Meeting Management Calendar</h2>
+<h2 class="mb-4 dashboard-title">Calendar</h2>
+<h3 class="dashboard-subtitle">Stay organized — track meetings by date and add upcoming events with ease.</h3>
+<hr>
 
 <div class="form-card row mb-4">
     <form method="POST" action="{{ url_for('calendar.add_event') }}">
@@ -291,7 +293,7 @@
         </div>
 
         <!-- Upcoming Events Table -->
-        <div class="upcoming-events-card">
+        <div class="form-card">
             <h5><i class="bi bi-list-check me-2"></i> Upcoming Events</h5>
             {% if allEvents|length == 0 %}
             <p>No events available.</p>

@@ -1,0 +1,103 @@
+{% extends "MeetingDashboard.html" %}
+{% block title %}Settings{% endblock %}
+
+
+{% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible fade show mt-3" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/settings.css') }}">
+
+<h2 class="dashboard-title">Settings</h2>
+<h3 class="dashboard-subtitle">Update your account details and personalize the app theme to your liking.</h3>
+<hr>
+
+<!-- ACCOUNT SETTINGS -->
+<div class="card settings-card mt-4">
+    <div class="card-header d-flex align-items-center">
+        <i class="bi bi-person-gear me-2"></i>
+        <h5 class="mb-0">Account Settings</h5>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('settings.settings') }}">
+            <div class="form-group d-flex align-items-center mb-3">
+                <label for="name" class="form-label">Full Name</label>
+                <input type="text" id="name" name="name" class="form-control" value="{{ user.name }}" required>
+            </div>
+
+            <div class="form-group d-flex align-items-center mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" id="email" name="email" class="form-control" value="{{ user.email }}" required>
+            </div>
+            <div class="form-group d-flex align-items-center mb-3">
+                <label for="old_password" class="form-label">Old Password</label>
+                <input type="password" id="old_password" name="old_password" class="form-control"
+                    placeholder="Enter old password (optional)">
+            </div>
+
+            <div class="form-group d-flex align-items-center mb-3">
+                <label for="new_password" class="form-label">New Password</label>
+                <input type="password" id="new_password" name="new_password" class="form-control"
+                    placeholder="Enter new password (optional)">
+            </div>
+
+            <div class="text-end mt-3">
+                <button type="submit" class="btn btn-primary px-4">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- THEME SETTINGS -->
+<div class="card settings-card mt-5">
+    <div class="card-header d-flex align-items-center">
+        <i class="bi bi-palette me-2"></i>
+        <h5 class="mb-0">Theme Settings</h5>
+    </div>
+    <div class="card-body text-center">
+        <p class="text-muted">Choose your preferred theme for the dashboard.</p>
+
+        <div class="theme-toggle">
+            <button id="lightMode" class="btn btn-light me-2">
+                <i class="bi bi-sun"></i> Light Mode
+            </button>
+            <button id="softMode" class="btn btn-secondary me-2">
+                <i class="bi bi-cloudy"></i> Soft Mode
+            </button>
+            <button id="darkMode" class="btn btn-dark">
+                <i class="bi bi-moon"></i> Dark Mode
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const lightBtn = document.getElementById("lightMode");
+    const softBtn = document.getElementById("softMode");
+    const darkBtn = document.getElementById("darkMode");
+
+    function setTheme(theme) {
+        document.body.classList.remove("light-theme", "soft-theme", "dark-theme");
+        document.body.classList.add(theme);
+        localStorage.setItem("theme", theme);
+    }
+
+    lightBtn.addEventListener("click", () => setTheme("light-theme"));
+    softBtn.addEventListener("click", () => setTheme("soft-theme"));
+    darkBtn.addEventListener("click", () => setTheme("dark-theme"));
+
+    // Persist theme on page reload
+    const savedTheme = localStorage.getItem("theme") || "light-theme";
+    document.body.classList.add(savedTheme);
+});
+</script>
+
+{% endblock %}

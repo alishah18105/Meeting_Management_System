@@ -1,0 +1,66 @@
+.settings-container {
+  width: 100%;
+  max-width: 100%;  /* remove width restriction */
+  margin: 0;        /* no centering */
+  padding: 30px 50px; /* add a bit of horizontal padding for spacing */
+  text-align: left; /* ensure headings align left */
+}
+
+.settings-card {
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%; /* ensure cards take full available width */
+  margin-bottom: 30px; /* consistent spacing between cards */
+}
+
+.card-header {
+  background: #1c1c1c;
+  color: #fff;
+  font-weight: 600;
+  padding: 15px 20px;
+  border-bottom: 1px solid #333;
+}
+
+.form-group {
+  display: flex;
+  align-items: center;
+  gap: 20px;              /* more space between label & input */
+  width: 75%;
+  margin-bottom: 20px;    /* space between each row */
+}
+
+.form-label {
+  flex: 0 0 220px !important;  /* wider label */
+  margin: 0;
+  font-weight: 600;
+  font-size: 1.05rem;          /* slightly larger font */
+  text-align: left;
+}
+
+.form-control {
+  flex: 1;
+  min-width: 250px;
+  height: 42px;                /* increased height */
+  padding: 8px 12px;
+  font-size: 1rem;
+}
+
+
+.text-muted {
+  font-size: 14px;
+  color: white !important;
+}
+
+
+
+.theme-toggle button {
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.theme-toggle button:hover {
+  transform: scale(1.05);
+}
+
+/* Light/Dark Theme Classes */

@@ -1,6 +1,6 @@
 body {
   font-family: "Segoe UI", Arial, sans-serif;
-  background-color: white;
+  background-color: var(--content-bg);
   margin: 0;
   padding: 0;
 
@@ -97,7 +97,7 @@ body {
   left: 0;
   height: calc(100% - 65px);
   width: 200px;
-  background-color: #f8f9fa;
+  background-color: var(--sidebar-bg);
   border-right: 1px solid #ddd;
   padding: 1rem;
   overflow-y: auto;
@@ -112,7 +112,7 @@ body {
   width: 70px;
 }
 
-.sidebar .btn {
+.sidebar-btn {
   width: 100%;
   text-align: left;
   padding: 10px;
@@ -121,17 +121,22 @@ body {
   margin-bottom: 12px;
   display: flex;
   align-items: center;
+  text-decoration: none; 
   gap: 10px;
+  background-color: var(--sidebar-btn-bg);
+  color: var(--text-color);
+  border: none;      /* remove border */
+  border-radius: 8px; /* optional */
   transition: background-color 0.3s ease;
 }
 
-.sidebar.collapsed .btn {
+.sidebar.collapsed .sidebar-btn {
   text-align: center;
   padding: 10px 0;
   font-size: 0;
 }
 
-.sidebar.collapsed .btn i {
+.sidebar.collapsed .sidebar-btn i {
   font-size: 1.2rem;
 }
 
@@ -145,9 +150,9 @@ body {
   margin-bottom: 1rem;
 }
 
-.sidebar .btn:hover {
+.sidebar-btn:hover {
+  background-color: #6d4ff5; /* or use a theme variable */
   color: white;
-  background-color: #6d4ff5;
 }
 
 /*Main Content */
@@ -155,9 +160,8 @@ body {
   margin-left: 200px;
   margin-top: 65px;
   padding: 2rem;
-  background-color: #fafafa;
+  background-color: var(--content-bg);
   min-height: calc(100vh - 65px - 60px);
-  /* navbar + footer height */
   overflow-y: auto;
   transition: left 0.3s ease;
 }
@@ -166,12 +170,12 @@ body {
   font-size: 1.8rem;
   font-weight: 600;
   margin-bottom: 0.5 rem;
-  color: #333;
+  color: var(--text-color);
 }
 
 .dashboard-subtitle {
   font-size: 1rem;
-  color: #777;
+  color: var(--subtitle-color);
   margin-bottom: 1.2rem;
 }
 
@@ -388,4 +392,40 @@ body {
   box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
   z-index: 999;
   font-size: 0.9rem;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid var(--text-color);
+  margin: 1.5rem 0;
+}
+/* Light Theme */
+.light-theme {
+  --sidebar-bg: #f8f9fa;
+  --content-bg: #FFFAFA;
+  --card-bg: #ffffff;
+  --card-text: #212529;
+  --text-color: #212529;
+  --subtitle-color: #555555;
+
+}
+
+/* Grey / Medium Theme */
+.soft-theme {
+  --sidebar-bg: #E6E0FA;    /* soft pastel lavender */
+  --content-bg: #FFEFD5;    /* soft warm cream */
+  --card-bg: #FFFFFF;        /* keep cards white for clarity */
+  --card-text: #1F2D3D;     /* soft dark blue for text */
+  --text-color: #1F2D3D;    /* main text color */
+  --subtitle-color: #4A6378;
+}
+
+/* Dark Theme */
+.dark-theme {
+  --sidebar-bg: #121212;
+  --content-bg: #262626;
+  --card-bg: #2a2a2a;
+  --card-text: #f8f9fa;
+  --text-color: #f8f9fa;
+  --subtitle-color: #cccccc;
 }

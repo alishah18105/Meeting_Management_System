@@ -15,6 +15,7 @@ from routes.meeting import meeting_bp
 from routes.notification import notification_bp
 from routes.profile import profile_bp
 from routes.rooms import rooms_bp
+from routes.settings import settings_bp
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres:ali@localhost:5432/meeting_systemdb"
@@ -28,6 +29,7 @@ app.register_blueprint(report_bp)
 app.register_blueprint(notification_bp)
 app.register_blueprint(profile_bp)
 app.register_blueprint(rooms_bp)
+app.register_blueprint(settings_bp)
 
 
 db.init_app(app)
