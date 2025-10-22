@@ -30,22 +30,36 @@
 
 /* Right Side Panel */
 .side-container {
-    flex: 0 0 33%;
-    background: linear-gradient(135deg, #6d4ff5, #9a73ff);;
-    border-radius: 16px;
-    padding: 20px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  flex: 0 0 33%;
+  background: linear-gradient(135deg, #7c5df8, #b491ff);
+  border-radius: 16px;
+  padding: 24px 20px; /* equal top/bottom padding */
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* equal spacing between both cards */
 }
+
 
 /* Form Card */
 .form-card {
-    background: #ffffff;
-    padding: 12px 18px;
-    border-radius: 10px;
-    margin-bottom: 18px;
-    border: 1px solid #e2e2e2;
-    box-shadow: 0 3px 8px rgba(109, 79, 245, 0.07);
-    transition: all 0.3s ease;
+  margin: 0; /* remove extra margin */
+  padding: 16px 18px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 4px 10px rgba(109, 79, 245, 0.1);
+}
+
+.side-container .form-card {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Fix any inner form or table width mismatches */
+.side-container form,
+.side-container table {
+  width: 100%;
 }
 .form-card:hover {
     box-shadow: 0 6px 16px rgba(109, 79, 245, 0.12);
@@ -73,13 +87,12 @@
 
 /* Upcoming Events */
 .upcoming-events-card {
-    margin-top: 2rem;
-    background: (135deg, #6d4ff5, #9a73ff);
-    border-radius: 14px;
-    border: 1px solid #e2e2e2;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-    padding: 40px;
-    transition: all 0.3s ease;
+  margin: 0; /* remove bottom margin */
+  padding: 16px 18px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 4px 10px rgba(109, 79, 245, 0.1);
 }
 .upcoming-events-card:hover {
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);

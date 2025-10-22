@@ -59,10 +59,12 @@
     margin-bottom: 15px;
     font-size: 18px;
     font-weight: 700;
-    border-bottom: 2px solid #e9ecef;
     padding-bottom: 8px;
     color:white;
+    background:#1c1c1c;
   }
+
+
 
    .btn-outline-secondary {
     border: none;
@@ -152,123 +154,131 @@
     color: rgba(255, 255, 255, 0.7);
   }
 
+.card-header {
+  background: #1c1c1c;
+  color: #fff;
+  font-weight: 600;
+  padding: 15px 20px;
+  border-bottom: 1px solid #333;
+  border-top: 1px solid #333;
+  border-left: 1px solid #333;
+  border-right: 1px solid #333;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  position: relative;
+ 
+}
+
+.account-info,
+.personal-info {
+  margin-left: 25px;
+}
+
+
+.mt-5 {
+  margin-top: 3rem !important;
+}
+
+
  </style> 
-
-
 
 <div class="profile-container">
   <div class="profile-header">
     <i class="bi bi-person-circle"></i>
     <h3>My Profile</h3>
     <div class="alert alert-warning alert-dismissible fade show mt-3 shadow-sm" role="alert" style="border-radius: 12px;">
-  <strong>Privacy Notice:</strong><br>
-  When you join meetings, webinars, chats or channels hosted on Zoom, your profile information, 
-  including your name and profile picture, may be visible to other participants or members. 
-  Your name and email address will also be visible to the account owner and host when you join meetings, 
-  on their account while you’re signed in. The account owner and others in 
-  the meeting can share this information with apps and others.
-  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
+      <strong>Privacy Notice:</strong><br>
+      When you join meetings, webinars, chats or channels hosted on Zoom, your profile information, 
+      including your name and profile picture, may be visible to other participants or members. 
+      Your name and email address will also be visible to the account owner and host when you join meetings, 
+      on their account while you’re signed in. The account owner and others in 
+      the meeting can share this information with apps and others.
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
+  </div>
 
   <!-- ACCOUNT INFO -->
-  <h5 class="section-title">Account Information</h5>
-  <table class="table-borderless profile-table">
-    <tr>
-      <th>Username</th>
-      <td>
-        {{ username }}
-       
-      </td>
-    </tr>
-    <tr>
-      <th>Email</th>
-      <td>
-        {{ email }}
-       
-      </td>
-    </tr>
-    <tr>
-      <th>Password</th>
-      <td>
-        <div class="d-flex align-items-center">
-          <input id="pwField" type="password"
-                 value="{{ plain_password if plain_password else '' }}"
-                 readonly
-                 placeholder="{{ 'Not available' if not plain_password else '' }}"
-                 style="max-width: 280px;" />
-          {% if plain_password %}
-          <button id="togglePw" class="btn btn-outline-secondary btn-sm ms-2" type="button">Show</button>
-          {% else %}
-          <small class="text-muted ms-2">Password not stored (secure)</small>
-          {% endif %}
-        </div>
-        
-      </td>
-    </tr>
-    <tr>
-      <th>Login Time</th>
-      <td>
-        {{ login_time }}
-       
-      </td>
-    </tr>
-  </table>
+  <div class="card-header d-flex align-items-center">
+    <i class="bi bi-person-badge me-2"></i>  <!-- changed icon -->
+    <h5 class="mb-0">Account Information</h5>
+  </div>
 
-  <!-- PERSONAL INFO -->
-  <form method="POST">
-    <h5 class="section-title">Personal Information</h5>
+  <div class="account-info mt-3 ms-4"> <!-- added slight margin-left -->
     <table class="table-borderless profile-table">
       <tr>
-        <th>Full Name</th>
-        <td>
-          {{ username }}
-         
-        </td>
+        <th>Username</th>
+        <td>{{ username }}</td>
       </tr>
       <tr>
         <th>Email</th>
+        <td>{{ email }}</td>
+      </tr>
+      <tr>
+        <th>Password</th>
         <td>
-          {{ email }}
-        
+          <div class="d-flex align-items-center">
+            <input id="pwField" type="password"
+              value="{{ plain_password if plain_password else '' }}"
+              readonly
+              placeholder="{{ 'Not available' if not plain_password else '' }}"
+              style="max-width: 280px;" />
+            {% if plain_password %}
+              <button id="togglePw" class="btn btn-outline-secondary btn-sm ms-2" type="button">Show</button>
+            {% else %}
+              <small class="text-muted ms-2">Password not stored (secure)</small>
+            {% endif %}
+          </div>
         </td>
       </tr>
       <tr>
-        <th>Role / Designation</th>
-        <td>
-          <input type="text" name="role" class="form-control" value="{{ role or '' }}" placeholder="Optional">
-         
-        </td>
-      </tr>
-      <tr>
-        <th>Department / Team</th>
-        <td>
-          <input type="text" name="department" class="form-control" value="{{ department or '' }}" placeholder="Optional">
-          
-        </td>
-      </tr>
-      <tr>
-        <th>Phone Number</th>
-        <td>
-          <input type="text" name="phone" class="form-control" value="{{ phone or '' }}" placeholder="Optional">
-        
-        </td>
-      </tr>
-      <tr>
-        <th>Date of Birth</th>
-        <td>
-          <input type="date" name="dob" class="form-control" value="{{ dob or '' }}">
-          
-        </td>
-      </tr>
-      <tr>
-        <th>Address</th>
-        <td>
-          <input type="text" name="address" class="form-control" value="{{ address or '' }}" placeholder="Optional">
-         
-        </td>
+        <th>Login Time</th>
+        <td>{{ login_time }}</td>
       </tr>
     </table>
+  </div>
+
+  <!-- Added visual spacing between sections -->
+  <div class="mt-5"></div>
+
+  <!-- PERSONAL INFO -->
+  
+    <div class="card-header d-flex align-items-center">
+      <i class="bi bi-person-lines-fill me-2"></i> <!-- changed icon -->
+      <h5 class="mb-0">Personal Information</h5>
+    </div>
+    <form method="POST">
+    <div class="personal-info mt-3 ms-4"> <!-- added slight margin-left -->
+      <table class="table-borderless profile-table">
+        <tr>
+          <th>Full Name</th>
+          <td>{{ username }}</td>
+        </tr>
+        <tr>
+          <th>Email</th>
+          <td>{{ email }}</td>
+        </tr>
+        <tr>
+          <th>Role / Designation</th>
+          <td><input type="text" name="role" class="form-control" value="{{ role or '' }}" placeholder="Optional"></td>
+        </tr>
+        <tr>
+          <th>Department / Team</th>
+          <td><input type="text" name="department" class="form-control" value="{{ department or '' }}" placeholder="Optional"></td>
+        </tr>
+        <tr>
+          <th>Phone Number</th>
+          <td><input type="text" name="phone" class="form-control" value="{{ phone or '' }}" placeholder="Optional"></td>
+        </tr>
+        <tr>
+          <th>Date of Birth</th>
+          <td><input type="date" name="dob" class="form-control" value="{{ dob or '' }}"></td>
+        </tr>
+        <tr>
+          <th>Address</th>
+          <td><input type="text" name="address" class="form-control" value="{{ address or '' }}" placeholder="Optional"></td>
+        </tr>
+      </table>
+    </div>
 
     <div class="text-center mt-4">
       <button type="submit" class="btn btn-primary px-4">Save Changes</button>
@@ -277,6 +287,7 @@
 
   <a href="{{ url_for('homePage') }}" class="back-btn mt-4">← Back to Dashboard</a>
 </div>
+
 
 <script>
   document.addEventListener("DOMContentLoaded", function() {

@@ -26,7 +26,6 @@ def settings():
         if old_password and new_password:
             if check_password_hash(user.password, old_password):
                 user.password = generate_password_hash(new_password)
-                flash("Password updated successfully!", "success")
             else:
                 flash("Old password is incorrect!", "danger")
                 return redirect(url_for('settings.settings'))
