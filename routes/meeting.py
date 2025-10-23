@@ -174,6 +174,7 @@ def update_meeting(meeting_id):
     old_status = meeting.status
     old_start = meeting.start_time
     old_end = meeting.end_time
+    old_room_id = meeting.room_id
 
     if request.method == "POST":
         title = request.form.get("title")
@@ -184,21 +185,22 @@ def update_meeting(meeting_id):
         end_time = datetime.fromisoformat(request.form['end_time'])
 
          # Check if the selected room is already booked for the same time
-        overlapping_meeting = Meeting.query.filter(
-            Meeting.room_id == room_id,
-            Meeting.start_time < end_time,
-            Meeting.end_time > start_time,
-            Meeting.status.in_(["Scheduled", "Ongoing"])  # booked or ongoing
-        ).first()
-
-        if overlapping_meeting:
-            flash(
-                f"❌ Room '{overlapping_meeting.room.room_name}' is already booked "
-                f"from {overlapping_meeting.start_time.strftime('%Y-%m-%d %H:%M')} "
-                f"to {overlapping_meeting.end_time.strftime('%Y-%m-%d %H:%M')}.",
-                "danger"
-            )
-            return redirect(url_for('meeting.meeting'))
+        if (room_id != old_room_id) or (old_start != start_time or old_end != end_time):
+            overlapping_meeting = Meeting.query.filter(
+                Meeting.room_id == room_id,
+                Meeting.meeting_id != meeting_id,  # 🔹 exclude the current meeting
+                Meeting.start_time < end_time,
+                Meeting.end_time > start_time,
+                Meeting.status.in_(["Scheduled", "Ongoing"])
+            ).first()
+            if overlapping_meeting:
+                flash(
+                    f"❌ Room '{overlapping_meeting.room.room_name}' is already booked "
+                    f"from {overlapping_meeting.start_time.strftime('%Y-%m-%d %H:%M')} "
+                    f"to {overlapping_meeting.end_time.strftime('%Y-%m-%d %H:%M')}.",
+                    "danger"
+                )
+                return redirect(url_for('meeting.meeting'))
 
         meeting.title = title
         meeting.room_id = room_id

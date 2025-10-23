@@ -80,6 +80,10 @@ class Meeting(db.Model):
     organizer_id = db.Column(db.Integer, db.ForeignKey("organizers.organizer_id", ondelete="CASCADE", onupdate="CASCADE"), nullable=False)
     room_id = db.Column(db.Integer, db.ForeignKey("rooms.room_id", ondelete="CASCADE", onupdate="CASCADE"), nullable=False)
     summary = db.Column(db.Text,  default='You haven’t added a summary yet')
+    before_expectation = db.Column(db.Text)      
+    before_topics = db.Column(db.Text)           
+    after_feedback = db.Column(db.Text)          
+    after_outcome = db.Column(db.Text)
     
     # Relationships
     organizer = db.relationship("Organizer", back_populates="meetings")
