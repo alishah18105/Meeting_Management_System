@@ -25,7 +25,7 @@ def get_dashboard():
     now=datetime.now()
     all_meetings={m.meeting_id:m for m in hosted_meetings+joined_meetings}.values()
     scheduled_meetings=sum(1 for m in all_meetings if m.status =="Scheduled")
-    cancelled_meetings=sum(1 for m in all_meetings if m.status =="Canceled")
+    cancelled_meetings=sum(1 for m in all_meetings if m.status =="Cancelled")
     total_meetings=len(all_meetings)
  
         #Calendar Card

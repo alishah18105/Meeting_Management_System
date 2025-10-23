@@ -1,0 +1,172 @@
+
+.profile-container {
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 40px 50px;
+    transition: all 0.3s ease;
+    background-color: #6f42c1;
+    color: white;
+}
+
+.profile-container:hover {
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+}
+
+.profile-container .profile-header {
+    text-align: center;
+    margin-bottom: 35px;
+    color: white;
+}
+
+.profile-container .profile-header i {
+    font-size: 60px;
+    color: white;
+}
+
+.profile-container .profile-header h3 {
+    margin-top: 10px;
+    font-weight: 700;
+    color: white;
+}
+
+
+.profile-container .profile-table th {
+    width: 220px;
+    font-weight: 600;
+    padding: 12px 0 6px;
+    vertical-align: top;
+    color: white;
+}
+
+.profile-container .profile-table td {
+    padding: 12px 0 6px;
+    vertical-align: top;
+    color: white;
+}
+
+.profile-container .field-note {
+    font-size: 13px;
+    font-style: italic;
+    margin-top: 4px;
+    color: white;
+}
+
+
+.profile-container .section-title {
+    margin-top: 40px;
+    margin-bottom: 15px;
+    font-size: 18px;
+    font-weight: 700;
+    padding-bottom: 8px;
+    color: white;
+    background: #1c1c1c;
+}
+
+
+.profile-container .btn-outline-secondary {
+    border: none;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    font-weight: 500;
+    transition: background 0.2s ease;
+}
+
+.profile-container .btn-outline-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.35);
+}
+
+.profile-container .btn-primary {
+    border-radius: 12px;
+    padding: 12px 28px;
+    background: linear-gradient(135deg, #ffffff, #e0e0e0);
+    color: #6f42c1;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    border: none;
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+.profile-container .btn-primary:hover {
+    background: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.4);
+    color: #6f42c1;
+}
+
+.profile-container .back-btn {
+    display: inline-block;
+    width: 100%;
+    max-width: 260px;
+    margin: 40px auto 0;
+    text-align: center;
+    background: linear-gradient(135deg, #ffffff, #e0e0e0);
+    color: #6f42c1;
+    font-weight: 700;
+    padding: 12px;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.3);
+}
+
+.profile-container .back-btn:hover {
+    background: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.4);
+    color: #6f42c1;
+}
+
+.profile-container .form-control {
+    border-radius: 10px;
+    border: none;
+    padding: 10px 14px;
+    font-size: 15px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    width: 100%;
+    transition: all 0.25s ease;
+}
+
+.profile-container .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.profile-container .form-control:focus {
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.4);
+}
+
+.profile-container #pwField {
+    border: none;
+    border-radius: 10px;
+    padding: 8px 12px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    width: 100%;
+}
+
+.profile-container #pwField::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.profile-container .card-header {
+    background: #1c1c1c;
+    color: #fff;
+    font-weight: 600;
+    padding: 15px 20px;
+    border: 1px solid #333;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    position: relative;
+}
+.profile-container .account-info,
+.profile-container .personal-info {
+    margin-left: 25px;
+}
+
+.profile-container .mt-5 {
+    margin-top: 3rem !important;
+}

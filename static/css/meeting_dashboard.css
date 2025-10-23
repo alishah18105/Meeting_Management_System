@@ -414,12 +414,12 @@ hr {
 
 /* Grey / Medium Theme */
 .soft-theme {
-  --sidebar-bg: #E6E0FA;    /* soft pastel lavender */
-  --content-bg: #F0E8FF;    /* soft warm cream #FFF4E8 */
-  --card-bg: #FFFFFF;        /* keep cards white for clarity */
-  --card-text: #1F2D3D;     /* soft dark blue for text */
-  --text-color: #1F2D3D;    /* main text color */
-  --subtitle-color: #4A6378;
+  --sidebar-bg: #E6E0FA;      /* pastel lavender – complements content */
+  --content-bg: #FAE6F7;      /* soft pink-cream main area */
+  --card-bg: #FFF9FD;         /* gentle off-white with pink tint */
+  --card-text: #2B2A4C;       /* soft navy-purple for readability */
+  --text-color: #2B2A4C;      /* consistent main text */
+  --subtitle-color: #6A5D7B;
 }
 
 /* Dark Theme */

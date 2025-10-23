@@ -1,249 +1,7 @@
-{% extends "MeetingDashboard.html" %} {% block title %}Dashboard - Meeting Management{% endblock %} {% block content %}
-<style>
-  .cards-grid,
-  .todo-section {
-    margin-bottom: 50px;
-    /* adds space so footer sits flush at bottom */
-  }
-
-  /* Optional: ensure min height for dashboard area */
-  .dashboard-title {
-    margin-top: 30px;
-  }
-
-  body {
-    background-color: #f9f9fc;
-  }
-
-  /* Ensure page content stretches enough to push footer down */
-  main.container {
-    min-height: calc(100vh - 160px);
-    /* adjust if your navbar/footer heights differ */
-  }
-
-  /* --- To-Do Section Specific Styles --- */
-
-  /* Style for the main To-Do section container */
-  .todo-section {
-    margin-top: 20px !important;
-    /* reduced top gap */
-    margin-bottom: 50px;
-    padding: 30px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  }
-
-  /* Style for the section title */
-  .todo-section .section-title {
-    margin-top: 0 !important;
-    margin-bottom: 15px;
-  }
-
-  .todo-section form.row {
-    align-items: center;
-    /* Vertically align items in the form */
-  }
-
-  /* Style for the 'Clear All' button form to separate it visually */
-
-
-  /* Style the task input for a modern look */
-  .todo-section .form-control {
-    border-radius: 6px;
-    border: 1px solid #ced4da;
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    flex: 1;
-  }
-
-  .todo-section .btn {
-    height: 42px;
-    white-space: nowrap;
-  }
-
-  .todo-section .form-control:focus {
-    border-color: #80bdff;
-    /* Standard Bootstrap focus blue */
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-  }
-
-  /* Table styling for the To-Do list */
-  .todo-section .table {
-    margin-top: 20px;
-    /* Optional: Remove the default table border if you want a cleaner look */
-    /* border: none; */
-  }
-
-  /* Style the table headers */
-  .todo-section thead th {
-    border-top: none;
-    /* Remove top border of table header */
-    border-bottom: 2px solid #dee2e6;
-    font-weight: 700;
-    color: #495057;
-  }
-
-  /* Style the table rows for better readability */
-  .todo-section tbody tr {
-    transition: background-color 0.15s ease-in-out;
-  }
-
-  .todo-section tbody tr:hover {
-    background-color: #f1f1f1;
-    /* Slight hover effect */
-  }
-
-  /* Style for 'Pending' badge */
-  .todo-section .badge.bg-warning {
-    min-width: 80px;
-    /* Ensure consistent width for badges */
-    display: inline-block;
-    text-align: center;
-    font-size: 14px;
-    padding: 10px;
-  }
-
-  .todo-section .d-flex.align-items-center.justify-content-between {
-    flex-wrap: nowrap !important;
-    /* prevent wrapping */
-    gap: 10px !important;
-  }
-
-  .todo-section form.d-flex {
-    flex-grow: 1;
-  }
-
-  /* Prevent Clear button from going down */
-  .todo-section .clear-btn {
-    margin-left: 10px !important;
-    height: 42px;
-    min-width: 120px;
-    white-space: nowrap;
-    align-self: center;
-  }
-
-
-  /* Style for 'Completed' badge */
-  .todo-section .badge.bg-success {
-    min-width: 80px;
-    display: inline-block;
-    text-align: center;
-    font-size: 14px;
-    padding: 10px;
-  }
-
-  /* Style for the actions column buttons */
-  .todo-section .btn-sm {
-    padding: .25rem .5rem;
-    /* Make buttons slightly larger than default sm */
-    font-size: .875rem;
-    line-height: 1.5;
-    border-radius: .2rem;
-  }
-
-  /* Style for the 'No tasks added yet' message */
-  .todo-section p.text-muted {
-    padding: 15px;
-    border: 1px dashed #ced4da;
-    border-radius: 4px;
-    text-align: center;
-    margin-top: 20px;
-    background-color: #fafafa;
-  }
-
-  .form-control {
-    width: 100%;
-    padding: 10px;
-
-  }
-
-  .add-btn {
-    width: 30%;
-    padding: 10px;
-  }
-
-  /* Modern Action Buttons for To-Do List */
-  .todo-section .action-btn {
-    border-radius: 50px;
-    /* Fully rounded pill shape */
-    padding: 6px 16px;
-    /* Comfortable padding */
-    font-size: 0.875rem;
-    /* Slightly smaller font */
-    font-weight: 500;
-    /* Medium weight for text */
-    transition: all 0.3s ease;
-    /* Smooth hover transition */
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-    /* Soft shadow */
-    cursor: pointer;
-    /* Pointer on hover */
-    border: none;
-    /* Clean border */
-  }
-
-  /* Hover effect: lift and shadow */
-  .todo-section .action-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-  }
-
-  /* Mark Done Button (Green) */
-  .todo-section .btn-success.action-btn {
-    background-color: white;
-    color: #43a047;
-    border: 2px solid #43a047;
-  }
-
-  .todo-section .btn-success.action-btn:hover {
-    background-color: #43a047;
-    color: #fff;
-  }
-
-  /* Delete Button (Red) */
-  .todo-section .btn-outline-danger.action-btn {
-    background-color: #fff;
-    color: #e53935;
-    border: 2px solid #e53935;
-  }
-
-  .todo-section .btn-outline-danger.action-btn:hover {
-    background-color: #e53935;
-    color: #fff;
-  }
-
-  /* Optional: add small icon spacing */
-  .todo-section .action-btn i {
-    margin-right: 5px;
-  }
-
-  /* Optional: smooth tooltip style */
-  .todo-section .action-btn[title] {
-    position: relative;
-  }
-
-  .todo-section .action-btn[title]:hover::after {
-    content: attr(title);
-    position: absolute;
-    top: -30px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #343a40;
-    color: #fff;
-    font-size: 12px;
-    padding: 4px 8px;
-    border-radius: 4px;
-    white-space: nowrap;
-    z-index: 10;
-    opacity: 0.9;
-  }
-
-  .add-btn,
-  .clear-btn {
-    white-space: nowrap;
-    padding: 10px 20px;
-  }
-</style>
+{% extends "MeetingDashboard.html" %} 
+{% block title %}Dashboard - Meeting Management{% endblock %} 
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/menu.css') }}">
 <h2 class="dashboard-title">Welcome to Meeting Management Dashboard</h2>
 <hr>
 <div class="cards-grid"> <!-- Example Card -->
@@ -306,7 +64,6 @@
   </div> <!-- Add other cards here -->
 </div>
 <hr>
-<!-- <div class="todo-section"> <h3 class="section-title"><i class="bi bi-list-task me-2"></i>To-Do</h3> <div class="todo-form mb-3"> <input type="text" id="todoInput" placeholder="Add a new task (e.g., 'Draft meeting agenda, high')" /> <button id="addTodoBtn" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Add</button> <button id="clearTodosBtn" class="btn btn-danger"><i class="bi bi-x-circle"></i> Clear All</button> </div> <div class="todo-cards" id="todoCards"></div> </div> -->
 <div class="todo-section">
   <h3 class="section-title"><i class="bi bi-list-task me-2"></i>To-Do</h3>
 
@@ -317,7 +74,7 @@
       style="margin: 0;">
       <input type="text" name="task" class="form-control" placeholder="Enter a new task" required style="height: 42px;">
       <button type="submit" class="btn btn-primary d-flex align-items-center justify-content-center"
-        style="height: 42px; min-width: 100px;">
+       >
         <i class="bi bi-plus-circle me-1"></i> Add
       </button>
     </form>
@@ -325,8 +82,7 @@
     <!-- Clear Button -->
     <form method="POST" action="{{ url_for('todo.clear_todos') }}" class="d-flex align-items-center mb-0"
       style="margin: 0;">
-      <button type="submit" class="btn btn-danger d-flex align-items-center justify-content-center"
-        style="height: 42px; min-width: 120px;">
+      <button type="submit" class="btn btn-danger d-flex align-items-center justify-content-center">
         <i class="bi bi-x-circle me-1"></i> Clear All
       </button>
     </form>

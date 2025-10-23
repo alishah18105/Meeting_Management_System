@@ -1,0 +1,7 @@
+.divider {
+  height: 4px;              /* thickness */
+  background-color: #ffffff; /* solid color */
+  width: 100%;              /* full width */
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;   /* spacing */
+}
