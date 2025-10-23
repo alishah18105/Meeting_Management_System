@@ -25,6 +25,8 @@ class User(db.Model):
     notifications = db.relationship("Notification", back_populates="user", cascade="all, delete")
     events = db.relationship("Event", back_populates="user", cascade="all, delete")
     todos = db.relationship("Todo", back_populates="user", cascade="all, delete")
+    forms = db.relationship('Form', back_populates='user', cascade="all, delete")
+
 
 
     def _repr_(self):
@@ -80,16 +82,14 @@ class Meeting(db.Model):
     organizer_id = db.Column(db.Integer, db.ForeignKey("organizers.organizer_id", ondelete="CASCADE", onupdate="CASCADE"), nullable=False)
     room_id = db.Column(db.Integer, db.ForeignKey("rooms.room_id", ondelete="CASCADE", onupdate="CASCADE"), nullable=False)
     summary = db.Column(db.Text,  default='You haven’t added a summary yet')
-    before_expectation = db.Column(db.Text)      
-    before_topics = db.Column(db.Text)           
-    after_feedback = db.Column(db.Text)          
-    after_outcome = db.Column(db.Text)
+    
     
     # Relationships
     organizer = db.relationship("Organizer", back_populates="meetings")
     room = db.relationship("Room", back_populates="meetings")
     participants = db.relationship("Participant", back_populates="meeting", cascade="all, delete")
     notifications = db.relationship("Notification", back_populates="meeting", cascade="all, delete")
+    forms = db.relationship('Form', back_populates='meeting', cascade="all, delete")
 
 
     def __repr__(self):
@@ -115,6 +115,38 @@ class Participant(db.Model):
     def __repr__(self):
         return f"<Participant user_id={self.user_id} meeting_id={self.meeting_id}>"
 
+# ----------------------
+# Forms Table
+# ----------------------
+class Form(db.Model):
+    __tablename__ = 'forms'
+    
+    form_id = db.Column(db.Integer, primary_key=True)
+    
+    # Correct ForeignKey references
+    meeting_id = db.Column(
+        db.Integer, 
+        db.ForeignKey('meetings.meeting_id', onupdate="CASCADE", ondelete="CASCADE"), 
+        nullable=False
+    )
+    user_id = db.Column(
+        db.Integer, 
+        db.ForeignKey('users.user_id', onupdate="CASCADE", ondelete="CASCADE"), 
+        nullable=True
+    )
+    
+    form_type = db.Column(db.String(20), nullable=False)  
+    expectations = db.Column(db.Text, nullable=True)      
+    suggestions = db.Column(db.Text, nullable=True)       
+    feedback = db.Column(db.Text, nullable=True)          
+    improvements = db.Column(db.Text, nullable=True)      
+
+    # Relationships
+    user = db.relationship('User', back_populates='forms')
+    meeting = db.relationship('Meeting', back_populates='forms')
+
+    def __repr__(self):
+        return f"<Form {self.form_type} by User {self.user_id} for Meeting {self.meeting_id}>"
 
 # ----------------------
 # Notifications Table

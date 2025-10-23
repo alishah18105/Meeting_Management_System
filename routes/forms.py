@@ -1,4 +1,4 @@
-from models import db,Meeting,Organizer
+from models import Form, Participant, db,Meeting,Organizer
 from flask import Blueprint,render_template,request,redirect,url_for,flash,session,jsonify
 import os
 from utilis.auth import login_required
@@ -9,105 +9,126 @@ SECRET_KEY=os.environ.get("SECRET_KEY","supersecretkey")
 serializer=URLSafeSerializer(SECRET_KEY, salt="form-share")
 
 #forms
-@forms_bp.route("/templates",methods=["GET"])
+@forms_bp.route("/templates", methods=["GET", "POST"])
 @login_required
 def template_gallery():
-    user_id=session.get("user_id")
+    user_id = session.get("user_id")
     if not user_id:
-        flash("Please log in first!","error")
+        flash("Please log in first!", "error")
         return redirect(url_for("auth.loginPage"))
+    meetings = []
+    organizer = Organizer.query.filter_by(user_id=user_id).first()
+    if organizer:
+        meetings = Meeting.query.filter(Meeting.organizer_id == organizer.organizer_id,
+                    Meeting.status != "Cancelled").all()    
+    if request.method == "POST":
+        filter_type = request.form.get("type")
+        meeting_id = request.form.get("meeting")
 
-    filter_type=request.args.get("type","all")
-    meetings_query = (
-        Meeting.query.join(Organizer)
-        .filter(Organizer.user_id == user_id)
-        .filter(Meeting.status != "Cancelled")  
-    )  
-    if filter_type=="before_meeting":
-        meetings_query=meetings_query.filter(Meeting.status.in_(["Scheduled","Ongoing"]))
-    elif filter_type=="after_meeting":
-        meetings_query=meetings_query.filter(Meeting.status=="Completed")    
-    meetings=meetings_query.all()
+        if filter_type and meeting_id:
+            new_form = Form(
+                form_type=filter_type,
+                meeting_id=meeting_id,
+                user_id=user_id  
+            )
+            db.session.add(new_form)
+            db.session.commit()
+            flash("Form generated successfully!", "success")
+            return redirect(url_for("forms.template_gallery"))
 
-    templates=[]
-    for m in meetings:
-        if m.status in ["Scheduled","Ongoing"]:
-            current_type="before_meeting"
-        elif m.status=="Completed":
-            current_type="after_meeting"
+    participant_meetings = (
+        db.session.query(Meeting)
+        .join(Participant)
+        .filter(Participant.user_id == user_id)
+        .all()
+    )
+
+    meetings_with_forms = []
+    for meeting in participant_meetings:
+        form_exists = Form.query.filter_by(meeting_id=meeting.meeting_id).first()
+        if form_exists:
+            meetings_with_forms.append(meeting)
+
+    # Prepare templates list for rendering
+    templates = []
+    for m in meetings_with_forms:
+        if m.status in ["Scheduled", "Ongoing"]:
+            current_type = "before_meeting"
+        elif m.status == "Completed":
+            current_type = "after_meeting"
         else:
-            current_type="unknown"
+            current_type = "unknown"
 
         templates.append({
-            "id":m.meeting_id,
-            "title":m.title,
-            "type":current_type
-        })       
-    return render_template("formGallery.html",templates=templates,current_type=filter_type)         
+            "id": m.meeting_id,
+            "title": m.title,
+            "type": current_type
+        })
 
-#open form
-@forms_bp.route("/form/<int:meeting_id>/<string:form_type>",methods=["GET"])
-@login_required
-def open_form(meeting_id,form_type):
-    user_id=session.get("user_id")
-    meeting=Meeting.query.get_or_404(meeting_id)
+    return render_template("formGallery.html", templates=templates, meetings = meetings)
 
-    if meeting.organizer.user_id!=user_id:
-        flash("You are not authorized to access this meeting form","error")
-        return redirect(url_for("forms.template_gallery"))
-    if form_type=="before_meeting":
-        form_data={
-            "title":f"Pre Meeting Form: {meeting.title}",
-            "fields":[
-                {"name":"before_expectation","label":"What are your expectations?","value":meeting.before_expectation or ""},
-                {"name":"before_topics","label":"Key topics to discuss?","value":meeting.before_topics or ""}
+
+@forms_bp.route("/forms/<int:meeting_id>/<form_type>")
+def open_form(meeting_id, form_type):
+    user_id = session.get("user_id")
+    meeting = Meeting.query.get_or_404(meeting_id)
+
+    form = Form.query.filter_by(meeting_id=meeting_id, user_id=user_id, form_type=form_type).first()
+
+    if form_type == "before_meeting":
+        form_data = {
+            "title": f"Pre Meeting Form: {meeting.title}",
+            "fields": [
+                {"name": "expectations", "label": "What are your expectations from the meeting?", "value": form.expectations if form else ""},
+                {"name": "suggestions", "label": "Any suggestion related to meeting?", "value": form.suggestions if form else ""}
             ]
         }
-    elif form_type=="after_meeting":
-        form_data={
-            "title":f"Post Meeting Form: {meeting.title}",
-            "fields":[
-                {"name":"after_feedback","label":"Your feedback on the meeting?","value":meeting.after_feedback or ""},
-                {"name":"after_outcome","label":"What was the key outcome/action?","value":meeting.after_outcome or ""}
+    elif form_type == "after_meeting":
+        form_data = {
+            "title": f"Post Meeting Form: {meeting.title}",
+            "fields": [
+                {"name": "feedback", "label": "Your feedback on the meeting?", "value": form.feedback if form else ""},
+                {"name": "improvements", "label": "What can be improved for next meeting?", "value": form.improvements if form else ""}
             ]
-        }         
+        }
     else:
-        flash("Invalid form type","error")
-        return redirect(url_for("forms.template_gallery"))
+        return "Invalid form type", 400
 
-    return render_template("FormFill.html",meeting=meeting,form_type=form_type,form_data=form_data)    
+    return render_template("FormFill.html", meeting=meeting, form_type=form_type, form_data=form_data)
 
 #Save Form Data
-@forms_bp.route("/form/<int:meeting_id>/<string:form_type>",methods=["POST"])
+
+@forms_bp.route("/form/<int:meeting_id>/<string:form_type>", methods=["GET","POST"])
 @login_required
-def save_form(meeting_id,form_type):
-    user_id=session.get("user_id")
-    meeting=Meeting.query.get_or_404(meeting_id)
+def save_form(meeting_id, form_type):
+    user_id = session.get("user_id")
+    meeting = Meeting.query.get_or_404(meeting_id)
 
-    if meeting.organizer.user_id!=user_id:
-        flash("You are not authorized to access this meeting form","error")
-        return redirect(url_for("forms.template_gallery"))    
+
     try:
-        if form_type=="before_meeting":
-            meeting.before_expectation=request.form.get("before_expectation")    
-            meeting.before_topics=request.form.get("before_topics")
-            if meeting.status=="Scheduled":
-                meeting.status="Ongoing"
-            flash(f"Pre-Meeting form for'{meeting.title}' saved successfully!","success")
+        # Check if a form already exists for this user & meeting
+        form = Form.query.filter_by(meeting_id=meeting_id, user_id=user_id, form_type=form_type).first()
+        if not form:
+            form = Form(meeting_id=meeting_id, user_id=user_id, form_type=form_type)
+            db.session.add(form)
 
-        elif form_type=="after_meeting":
-            meeting.after_feedback=request.form.get("after_feedback")    
-            meeting.after_outcome=request.form.get("after_outcome")
-            meeting.status="Completed"
-            flash(f"Post-Meeting form for'{meeting.title}' saved successfully!","success")    
+        if form_type == "before_meeting":
+            form.expectations = request.form.get("expectations")
+            form.suggestions = request.form.get("suggestions")
+            flash(f"Pre Meeting form for '{meeting.title}' saved successfully!", "success")
+
+        elif form_type == "after_meeting":
+            form.feedback = request.form.get("feedback")
+            form.improvements = request.form.get("improvements")
+            flash(f"Post Meeting form for '{meeting.title}' saved successfully!", "success")
 
         db.session.commit()
-    
+
     except Exception as e:
         db.session.rollback()
-        flash(f"An error occurred while saving the form: {e}","error")
-    
-    return redirect(url_for("forms.template_gallery"))     
+        flash(f"An error occurred while saving the form: {e}", "error")
+
+    return redirect(url_for("forms.template_gallery"))
 
 #Share Form Link
 @forms_bp.route("/form/share/<int:meeting_id>/<string:form_type>",methods=["GET"])
@@ -117,7 +138,6 @@ def share_form(meeting_id,form_type):
     meeting=Meeting.query.get_or_404(meeting_id)
 
     if meeting.organizer.user_id != user_id:
-        flash("You are not authorized to access this meeting form","error")
         return redirect(url_for("forms.template_gallery"))  
 
     token=serializer.dumps({"meeting_id":meeting_id,"form_type":form_type})

@@ -2,155 +2,55 @@
 {% block title %}Forms Gallery - Meeting Management{% endblock %}
 
 {% block content %}
-<style>
-    body {
-        background-color: #f5f6fb;
-        font-family: "Poppins", "Segoe UI", sans-serif;
-        color: #333;
-    }
+<link rel="stylesheet" href="{{ url_for('static', filename='css/formGallery.css') }}">
+<script src="{{ url_for('static', filename='js/formGallery.js') }}"></script>
 
-    /* ===== FILTER CARD ===== */
-    .filter-card {
-        background: linear-gradient(135deg, #6d4ff5, #b78cff);
-        border: none;
-        border-radius: 20px;
-        color: white;
-        box-shadow: 0 8px 25px rgba(111, 66, 193, 0.15);
-    }
-
-    .filter-card h5 {
-        font-weight: 600;
-        font-size: 1.1rem;
-        margin-bottom: 1rem;
-    }
-
-    .filter-card label {
-        color: #f8f8ff;
-        font-weight: 500;
-    }
-
-    .filter-card select,
-    .filter-card button {
-        border-radius: 12px;
-    }
-
-    .filter-card button {
-        background-color: #5b2dc3;
-        color: #fff;
-        font-weight: 600;
-        border: none;
-        transition: all 0.3s ease;
-    }
-
-    .filter-card button:hover {
-        background-color: #5b2dc3;
-        color: #fff;
-        transform: scale(1.03);
-    }
-
-    /* ===== TEMPLATE CARDS ===== */
-    .template-card {
-        background-color: #fff;
-        border-radius: 18px;
-        border: 1px solid #ebe9f6;
-        padding: 25px 20px;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 14px rgba(111, 66, 193, 0.07);
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-    }
-
-    .template-card:hover {
-        border-color: #6f42c1;
-        box-shadow: 0 6px 20px rgba(111, 66, 193, 0.15);
-        transform: translateY(-5px);
-    }
-
-    .template-card h5 {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: #6f42c1;
-        margin-bottom: 8px;
-    }
-
-    .template-card p {
-        font-size: 0.92rem;
-        color: #6c757d;
-        margin-bottom: 20px;
-    }
-
-    .template-card .btn {
-        border-radius: 50px;
-        font-weight: 600;
-        font-size: 0.9rem;
-        padding: 8px 22px;
-        transition: all 0.3s ease;
-        align-self: flex-start;
-        box-shadow: 0 0 0 1px #6f42c1;
-    }
-
-    .template-card .btn-share {
-        background-color: #f3f0ff;
-        color: #4b2aad;
-        border: 1px solid #d4c6ff;
-        margin-left: 10px;
-    }
-
-    .template-card .btn-share:hover {
-        background-color: #6f42c1;
-        color: #fff;
-        transform: translateY(-2px);
-    }
-
-    /* ===== TOAST ===== */
-    .copy-toast {
-        position: fixed;
-        bottom: 25px;
-        right: 25px;
-        background-color: #4b2aad;
-        color: white;
-        padding: 12px 20px;
-        border-radius: 10px;
-        font-size: 0.9rem;
-        box-shadow: 0 5px 20px rgba(111, 66, 193, 0.3);
-        opacity: 0;
-        transform: translateY(20px);
-        transition: all 0.4s ease;
-        z-index: 9999;
-    }
-
-    .copy-toast.show {
-        opacity: 1;
-        transform: translateY(0);
-    }
-</style>
-
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="alert alert-{{ category }} alert-dismissible fade show mt-3" role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
 <h2 class="dashboard-title">Forms Gallery
-  <i class="bi bi-journal-text" style="font-size:1.5rem; margin-left:8px; color:var(--title-color);"></i>
+    <i class="bi bi-journal-text" style="font-size:1.5rem; margin-left:8px; color:var(--title-color);"></i>
 </h2>
 <h3 class="dashboard-subtitle">Select a meeting and the corresponding form type to fill it out.</h3>
-
 <hr>
 
+
 <div class="card filter-card shadow-sm p-4 mb-5">
-    <h5 class="fw-semibold mb-3"><i class="bi bi-funnel"></i> Filter Templates</h5>
-    <form id="templateFilter" method="GET" action="{{ url_for('forms.template_gallery') }}">
+    <h5 class="fw-semibold mb-3"><i class="bi bi-funnel"></i> Generate Form</h5>
+    <form id="templateFilter" method="POST" action="{{ url_for('forms.template_gallery') }}">
         <div class="row g-3">
             <div class="col-md-4">
                 <label class="form-label">Template Type</label>
                 <select name="type" class="form-select">
-                    <option value="">All Types</option>
+                    <option value="">Select template type</option>
                     <option value="before_meeting" {% if current_type=='before_meeting' %}selected{% endif %}>Before
                         Meeting</option>
                     <option value="after_meeting" {% if current_type=='after_meeting' %}selected{% endif %}>After
                         Meeting</option>
                 </select>
             </div>
+            <div class="col-md-3">
+                <label class="form-label">Meeting Title</label>
+                <select name="meeting" class="form-select">
+                    <option value="">Select meeting</option>
+                    {% for meeting in meetings %}
+                    <option value="{{ meeting.meeting_id }}">
+                        {{ meeting.title }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
 
             <div class="col-md-4 d-flex align-items-end">
-                <button type="submit" class="btn btn-light fw-semibold px-5">
-                    <i class="bi bi-search"></i> Apply Filters
+                <button type="submit" class="btn btn-light  px-5">
+                    Generate
                 </button>
             </div>
         </div>
@@ -172,15 +72,15 @@
             </p>
 
             <div class="d-flex justify-content-start align-items-center mt-auto gap-2">
-    <a href="{{ url_for('forms.open_form', meeting_id=template.id, form_type=template.type) }}"
-        class="btn btn-outline-primary">
-        Open Form
-    </a>
-
-    <button class="btn btn-outline-secondary share-btn" data-id="{{ template.id }}" data-type="{{ template.type }}">
-        <i class="bi bi-share-fill"></i> Share
-    </button>
-</div>
+                <button class="btn btn-outline-primary" data-meeting-id="{{ template.id }}"
+                    data-form-type="{{ template.type }}" onclick="openFormModal(this)">
+                    Open Form
+                </button>
+                <button class="btn btn-outline-secondary share-btn" data-id="{{ template.id }}"
+                    data-type="{{ template.type }}">
+                    <i class="bi bi-share-fill"></i> Share
+                </button>
+            </div>
 
         </div>
     </div>
@@ -188,29 +88,27 @@
     {% else %}
     <div class="col-12">
         <p class="text-center text-muted fs-5 py-5">
-            <i class="bi bi-info-circle me-2"></i> No meetings found matching your filter criteria.
+            <i class="bi bi-info-circle me-2"></i> No forms found.
         </p>
     </div>
     {% endif %}
+    <!-- Form Modal -->
+    <div class="modal fade" id="formModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content" style="background:transparent">
+                <div class="modal-body" id="formModalBody">
+                    <!-- Loading spinner initially -->
+                    <div class="text-center py-5" id="loadingSpinner">
+                        <div class="spinner-border text-light" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<script>
-    document.querySelectorAll('.share-btn').forEach(btn => {
-        btn.addEventListener('click', async () => {
-            const meetingId = btn.dataset.id;
-            const formType = btn.dataset.type;
 
-            try {
-                const res = await fetch(`/form/share/${meetingId}/${formType}`);
-                const data = await res.json();
-
-                navigator.clipboard.writeText(data.share_url);
-                alert(`✅ Share link copied!\n${data.share_url}`);
-            } catch (err) {
-                alert("Failed to generate share link.");
-            }
-        });
-    });
-</script>
 
 {% endblock %}

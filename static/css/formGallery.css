@@ -1,0 +1,125 @@
+.filter-card {
+        background: linear-gradient(135deg, #6d4ff5, #b78cff);
+        border: none;
+        border-radius: 20px;
+        color: white;
+        box-shadow: 0 8px 25px rgba(111, 66, 193, 0.15);
+    }
+
+    .filter-card h5 {
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+    }
+
+    .filter-card label {
+        color: #f8f8ff;
+        font-weight: 500;
+    }
+
+    .filter-card select,
+    .filter-card button {
+        border-radius: 12px;
+    }
+
+    .filter-card button {
+        background-color: #5b2dc3;
+        color: #fff;
+        font-weight: 400;
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .filter-card button:hover {
+        background-color: #5b2dc3;
+        color: #fff;
+        transform: scale(1.03);
+    }
+
+
+    /* ===== TEMPLATE CARDS ===== */
+    .template-card {
+        background-color: #fff;
+        border-radius: 18px;
+        border: 1px solid #ebe9f6;
+        padding: 25px 20px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 14px rgba(111, 66, 193, 0.07);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .template-card:hover {
+        border-color: #6f42c1;
+        box-shadow: 0 6px 20px rgba(111, 66, 193, 0.15);
+        transform: translateY(-5px);
+    }
+
+    .template-card h5 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #6f42c1;
+        margin-bottom: 8px;
+    }
+
+    .template-card p {
+        font-size: 0.92rem;
+        color: #6c757d;
+        margin-bottom: 20px;
+    }
+
+    .template-card .btn {
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        padding: 8px 22px;
+        transition: all 0.3s ease;
+        align-self: flex-start;
+        box-shadow: 0 0 0 1px #6f42c1;
+    }
+
+    .template-card .btn-share {
+        background-color: #f3f0ff;
+        color: #4b2aad;
+        border: 1px solid #d4c6ff;
+        margin-left: 10px;
+    }
+
+    .template-card .btn-share:hover {
+        background-color: #6f42c1;
+        color: #fff;
+        transform: translateY(-2px);
+    }
+
+    /* ===== TOAST ===== */
+    .copy-toast {
+        position: fixed;
+        bottom: 25px;
+        right: 25px;
+        background-color: #4b2aad;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        box-shadow: 0 5px 20px rgba(111, 66, 193, 0.3);
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.4s ease;
+        z-index: 9999;
+    }
+
+    .copy-toast.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    #formModal .modal-dialog {
+        box-shadow: none !important;
+    }
+
+    #formModal .modal-content {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
