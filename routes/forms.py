@@ -43,30 +43,18 @@ def template_gallery():
         .all()
     )
 
-    meetings_with_forms = []
-    for meeting in participant_meetings:
-        form_exists = Form.query.filter_by(meeting_id=meeting.meeting_id).first()
-        if form_exists:
-            meetings_with_forms.append(meeting)
-
-    # Prepare templates list for rendering
+    # Collect all forms for each meeting the participant is part of
     templates = []
-    for m in meetings_with_forms:
-        if m.status in ["Scheduled", "Ongoing"]:
-            current_type = "before_meeting"
-        elif m.status == "Completed":
-            current_type = "after_meeting"
-        else:
-            current_type = "unknown"
+    for meeting in participant_meetings:
+        forms = Form.query.filter_by(meeting_id=meeting.meeting_id).all()
+        for f in forms:
+            templates.append({
+                "id": meeting.meeting_id,
+                "title": meeting.title,
+                "type": f.form_type  
+            })
 
-        templates.append({
-            "id": m.meeting_id,
-            "title": m.title,
-            "type": current_type
-        })
-
-    return render_template("formGallery.html", templates=templates, meetings = meetings)
-
+    return render_template("formGallery.html", templates=templates, meetings=meetings)
 
 @forms_bp.route("/forms/<int:meeting_id>/<form_type>")
 def open_form(meeting_id, form_type):
